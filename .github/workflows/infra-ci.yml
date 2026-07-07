@@ -25,7 +25,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Code Quality Gate: This checks style without needing AWS access
+      # 2. This checks style without needing AWS access
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -38,7 +38,7 @@ jobs:
       - name: Validate Configuration
         run: terraform validate
 
-      # 3. Cloud Reality Gate: Connect to AWS to see what would change
+      # 3. Connect to AWS to see what would change
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
