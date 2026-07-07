@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'infra/main_infra/**'
+      - 'infra/**'
 
 # ADD THIS PERMISSIONS BLOCK
 permissions:
