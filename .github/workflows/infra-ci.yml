@@ -20,7 +20,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infra/main_infra
+        working-directory: infra
 
     steps:
       - name: Checkout Code
