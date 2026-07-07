@@ -1,6 +1,6 @@
 name: Destroy Main Infrastructure (Manual)
 
-# 1. The Trigger: Manual only, requiring explicit text input
+# 1. Manual only, requiring explicit text input
 on:
   workflow_dispatch:
     inputs:
