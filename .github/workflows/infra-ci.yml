@@ -1,0 +1,55 @@
+name: Terraform CI (Verify & Speculative Plan)
+
+# 1. Trigger on Pull Requests to main when infrastructure files change
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infra/main_infra/**'
+
+# ADD THIS PERMISSIONS BLOCK
+permissions:
+  id-token: write   # Required for requesting the JWT to authenticate with AWS
+  contents: read    # Required for actions/checkout
+
+jobs:
+  validate-and-plan:
+    name: Lint, Validate, and Plan
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: infra/main_infra
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Code Quality Gate: This checks style without needing AWS access
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Check Formatting
+        run: terraform fmt -check -recursive
+
+      - name: Initialize Code Validation
+        run: terraform init -backend=false
+
+      - name: Validate Configuration
+        run: terraform validate
+
+      # 3. Cloud Reality Gate: Connect to AWS to see what would change
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+          aws-region: eu-north-1
+
+      # Re-initialize with backend enabled to fetch state for the plan
+      - name: Terraform Init (With Backend)
+        run: terraform init -force-copy
+
+      - name: Speculative Plan
+        id: plan
+        run: terraform plan -no-color

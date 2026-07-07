@@ -1,0 +1,52 @@
+name: Destroy Main Infrastructure (Manual)
+
+# 1. The Trigger: Manual only, requiring explicit text input
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Type DESTROY to confirm you want to tear down main_infra'
+        required: true
+        type: string
+
+permissions:
+  id-token: write   # Required for requesting the JWT to authenticate with AWS
+  contents: read    # Required for actions/checkout
+
+jobs:
+  destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    
+    # 2. The Sandbox: Hardcode the directory so it CANNOT touch /infra/bootstrap
+    defaults:
+      run:
+        working-directory: infra/main_infra
+
+    steps:
+      # 3. The Gatekeeper: Fail immediately if the text input doesn't match
+      - name: Verify Confirmation Phrase
+        run: |
+          if [ "${{ inputs.confirm_destroy }}" != "DESTROY" ]; then
+            echo "❌ Confirmation failed. You must type DESTROY exactly."
+            exit 1
+          fi
+          echo "✅ Confirmation accepted. Proceeding with destruction."
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+          aws-region: eu-north-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
