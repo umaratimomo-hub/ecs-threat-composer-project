@@ -21,7 +21,7 @@ jobs:
     # 2. The Sandbox: Hardcode the directory so it CANNOT touch /infra/bootstrap
     defaults:
       run:
-        working-directory: infra/main_infra
+        working-directory: infra
 
     steps:
       # 3. The Gatekeeper: Fail immediately if the text input doesn't match
