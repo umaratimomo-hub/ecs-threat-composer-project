@@ -18,20 +18,20 @@ jobs:
     name: Terraform Destroy
     runs-on: ubuntu-latest
     
-    # 2. The Sandbox: Hardcode the directory so it CANNOT touch /infra/bootstrap
+    # 2. Hardcode the directory so other folders are not accessed
     defaults:
       run:
         working-directory: infra
 
     steps:
-      # 3. The Gatekeeper: Fail immediately if the text input doesn't match
+      # 3. Fail immediately if the text input doesn't match
       - name: Verify Confirmation Phrase
         run: |
           if [ "${{ inputs.confirm_destroy }}" != "DESTROY" ]; then
-            echo "❌ Confirmation failed. You must type DESTROY exactly."
+            echo "Confirmation failed. You must type DESTROY exactly."
             exit 1
           fi
-          echo "✅ Confirmation accepted. Proceeding with destruction."
+          echo "Confirmation accepted. Proceeding with destruction."
 
       - name: Checkout Code
         uses: actions/checkout@v4

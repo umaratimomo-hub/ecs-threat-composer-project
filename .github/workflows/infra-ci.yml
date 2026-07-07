@@ -6,9 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'infra/main_infra/**'
+      - 'infra/**'
 
-# ADD THIS PERMISSIONS BLOCK
 permissions:
   id-token: write   # Required for requesting the JWT to authenticate with AWS
   contents: read    # Required for actions/checkout
@@ -20,7 +19,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infra/main_infra
+        working-directory: infra
 
     steps:
       - name: Checkout Code
