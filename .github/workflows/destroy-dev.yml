@@ -25,6 +25,11 @@ jobs:
 
     steps:
       # 3. Fail immediately if the text input doesn't match
+      
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Verify Confirmation Phrase
         run: |
           if [ "${{ inputs.confirm_destroy }}" != "DESTROY" ]; then
@@ -32,9 +37,6 @@ jobs:
             exit 1
           fi
           echo "Confirmation accepted. Proceeding with destruction."
-
-      - name: Checkout Code
-        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
