@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm_destroy:
-        description: 'Type DESTROY to confirm you want to tear down main_infra'
+        description: 'Type DESTROY to confirm you want to tear down infra'
         required: true
         type: string
 
