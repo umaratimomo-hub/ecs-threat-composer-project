@@ -479,3 +479,7 @@ resource "aws_ecr_repository" "app" {
   }
 }
 
+output "ci_test_message" {
+  value       = "Hello from the CI pipeline test!"
+  description = "A dummy output to trigger the GitHub Actions plan."
+}
