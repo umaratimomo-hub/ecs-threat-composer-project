@@ -24,9 +24,6 @@ jobs:
         working-directory: infra
 
     steps:
-      # 3. Fail immediately if the text input doesn't match
-      
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
