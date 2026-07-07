@@ -479,3 +479,8 @@ resource "aws_ecr_repository" "app" {
   }
 }
 
+
+output "pipeline_check" {
+  value       = "Running test number 2!"
+  description = "Verifying GitHub actions trigger"
+}
