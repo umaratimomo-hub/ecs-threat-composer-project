@@ -1,5 +1,5 @@
 variable "project_name" {
-  description = "The name of the project"
-  type        = string
-  default     = "threat-composer"
+  description  = "The name of the project"
+  type         = string
+  project_name = var.project_name
 }
