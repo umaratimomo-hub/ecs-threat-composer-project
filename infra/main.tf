@@ -10,8 +10,7 @@ module "vpc" {
 # }
 
 module "alb" {
-  source       = "./modules/alb"
-  project_name = var.project_name
+  source = "./modules/alb"
 }
 
 # module "ecs" {
