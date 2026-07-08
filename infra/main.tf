@@ -144,14 +144,14 @@ resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
 # ------------------------------------------------------------------------------
 
 resource "aws_lb" "main" {
-  name               = "threat-composer-alb"
+  name               = "${var.project_name}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [aws_subnet.network["public-a"].id, aws_subnet.network["public-b"].id]
+  subnets            = module.vpc.public_subnet_ids
 
   tags = {
-    Name = "threat-composer-alb"
+    Name = "${var.project_name}-alb"
   }
 }
 
@@ -214,7 +214,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
@@ -224,7 +224,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
@@ -234,7 +234,7 @@ resource "aws_vpc_endpoint" "logs" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.logs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
@@ -244,7 +244,7 @@ resource "aws_vpc_endpoint" "ecs_agent" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-agent"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
@@ -253,7 +253,7 @@ resource "aws_vpc_endpoint" "ecs_telemetry" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-telemetry"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
@@ -263,7 +263,7 @@ resource "aws_vpc_endpoint" "ecs" {
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  subnet_ids          = module.vpc.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
