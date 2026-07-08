@@ -9,10 +9,10 @@ module "vpc" {
 #   project_name = var.project_name
 # }
 
-# module "alb" {
-#   source       = "./modules/alb"
-#   project_name = var.project_name
-# }
+module "alb" {
+  source       = "./modules/alb"
+  project_name = var.project_name
+}
 
 # module "ecs" {
 #   source       = "./modules/ecs"
