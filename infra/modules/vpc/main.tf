@@ -23,7 +23,7 @@ locals {
 }
 
 
-Create the Subnets with One Block:
+#Create the Subnets with One Block:
 
 resource "aws_subnet" "this" {
   for_each = local.subnets
