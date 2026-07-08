@@ -370,7 +370,7 @@ resource "aws_ecs_task_definition" "app" {
 # ------------------------------------------------------------------------------
 
 resource "aws_ecs_service" "app" {
-  name            = "threat-composer-service"
+  name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
@@ -379,7 +379,7 @@ resource "aws_ecs_service" "app" {
   health_check_grace_period_seconds = 120
 
   network_configuration {
-    subnets          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+    subnet_ids          = module.vpc.private_subnet_ids
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
   }
