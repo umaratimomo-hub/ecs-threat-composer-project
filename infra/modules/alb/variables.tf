@@ -1,8 +1,26 @@
-# locals {
-#   subnets = {
-#     "public-a" = { cidr = "10.0.1.0/24", az = "eu-north-1a", public = true }
-#     "public-b" = { cidr = "10.0.2.0/24", az = "eu-north-1b", public = true }
-#     "private-a" = { cidr = "10.0.10.0/24", az = "eu-north-1a", public = false }
-#     "private-b" = { cidr = "10.0.11.0/24", az = "eu-north-1b", public = false }
-#   }
-# }
+variable "project_name" {
+  description = "The name of the project"
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC where the ALB security group will be created"
+  type        = string
+}
+
+variable "public_subnet_ids" {
+  description = "The list of public subnet IDs to host the ALB"
+  type        = list(string)
+}
+
+variable "domain_name" {
+  description = "The primary domain name for the ACM SSL certificate"
+  type        = string
+  default     = ""
+}
+
+variable "route53_zone_id" {
+  description = "The Route 53 Hosted Zone ID for domain validation"
+  type        = string
+  default     = ""
+}
