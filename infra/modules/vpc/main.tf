@@ -15,8 +15,8 @@ resource "aws_vpc" "main" {
 #--------------------
 locals {
   subnets = {
-    "public-a" = { cidr = "10.0.1.0/24", az = "eu-north-1a", public = true }
-    "public-b" = { cidr = "10.0.2.0/24", az = "eu-north-1b", public = true }
+    "public-a"  = { cidr = "10.0.1.0/24", az = "eu-north-1a", public = true }
+    "public-b"  = { cidr = "10.0.2.0/24", az = "eu-north-1b", public = true }
     "private-a" = { cidr = "10.0.10.0/24", az = "eu-north-1a", public = false }
     "private-b" = { cidr = "10.0.11.0/24", az = "eu-north-1b", public = false }
   }
@@ -28,9 +28,9 @@ locals {
 resource "aws_subnet" "network" {
   for_each = local.subnets
 
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = each.value.cidr
-  availability_zone = each.value.az
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value.cidr
+  availability_zone       = each.value.az
   map_public_ip_on_launch = each.value.public
 
   tags = {
