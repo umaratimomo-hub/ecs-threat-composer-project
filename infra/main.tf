@@ -44,7 +44,7 @@ locals {
 }
 
 resource "aws_security_group" "alb" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = module.vpc.vpc_id
 
   dynamic "ingress" {
     for_each = local.alb_rules
@@ -62,7 +62,7 @@ resource "aws_security_group" "alb" {
 # resource "aws_security_group" "alb" {
 #   name        = "threat-composer-alb-sg"
 #   description = "Controls access to the public Application Load Balancer"
-#   vpc_id      = aws_vpc.main.id
+#   vpc_id      = module.vpc.vpc_id
 
 #   # Inbound HTTP traffic from anywhere on the internet
 #   ingress {
@@ -96,7 +96,7 @@ resource "aws_security_group" "alb" {
 resource "aws_security_group" "ecs_tasks" {
   name        = "threat-composer-tasks-sg"
   description = "Isolates containers; only allows traffic from the ALB"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   # Strict Inbound: ONLY traffic originating from ALB Security Group is allowed
   ingress {
@@ -122,7 +122,7 @@ resource "aws_security_group" "ecs_tasks" {
 resource "aws_security_group" "vpc_endpoints" {
   name        = "threat-composer-vpce-sg"
   description = "Security group for VPC Interface Endpoints"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   tags = {
     Name = "threat-composer-vpce-sg"
@@ -159,7 +159,7 @@ resource "aws_lb_target_group" "app" {
   name        = "threat-composer-tg"
   port        = 8080
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
   target_type = "ip" # Fargate requires 'ip' target type
 
   deregistration_delay = 60
@@ -202,15 +202,15 @@ data "aws_region" "current" {}
 
 # S3 Gateway Endpoint (FREE)
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id            = aws_vpc.main.id
+  vpc_id            = module.vpc.vpc_id
   service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids   = [aws_route_table.private.id]
+  route_table_ids   = [module.vpc.private_route_table_id]
 }
 
 # ECR API
 resource "aws_vpc_endpoint" "ecr_api" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -220,7 +220,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 
 # ECR DKR (REQUIRED FOR IMAGE PULL)
 resource "aws_vpc_endpoint" "ecr_dkr" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -230,7 +230,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 
 # CloudWatch Logs
 resource "aws_vpc_endpoint" "logs" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.logs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -240,7 +240,7 @@ resource "aws_vpc_endpoint" "logs" {
 
 # ECS Agent & Telemetry
 resource "aws_vpc_endpoint" "ecs_agent" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-agent"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -249,7 +249,7 @@ resource "aws_vpc_endpoint" "ecs_agent" {
 }
 
 resource "aws_vpc_endpoint" "ecs_telemetry" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-telemetry"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
@@ -259,7 +259,7 @@ resource "aws_vpc_endpoint" "ecs_telemetry" {
 
 # ECS API
 resource "aws_vpc_endpoint" "ecs" {
-  vpc_id              = aws_vpc.main.id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true

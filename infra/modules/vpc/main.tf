@@ -25,7 +25,7 @@ locals {
 
 #Create the Subnets with One Block:
 
-resource "aws_subnet" "this" {
+resource "aws_subnet" "network" {
   for_each = local.subnets
 
   vpc_id            = aws_vpc.main.id
@@ -78,12 +78,12 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private_a" {
-  subnet_id      = aws_subnet.private_a.id
+  subnet_id      = aws_subnet.network["private-a"].id
   route_table_id = aws_route_table.private.id
 }
 
 resource "aws_route_table_association" "private_b" {
-  subnet_id      = aws_subnet.private_b.id
+  subnet_id      = aws_subnet.network["private-b"].id
   route_table_id = aws_route_table.private.id
 }
 
@@ -140,11 +140,11 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public_a" { #link public subnet A to the public route table
-  subnet_id      = aws_subnet.public_a.id
+  subnet_id      = aws_subnet.network["public-a"].id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "public_b" { #link public subnet B to the public route table
-  subnet_id      = aws_subnet.public_b.id
+  subnet_id      = aws_subnet.network["public-b"].id
   route_table_id = aws_route_table.public.id
 }
