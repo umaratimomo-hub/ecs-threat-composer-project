@@ -379,7 +379,7 @@ resource "aws_ecs_service" "app" {
   health_check_grace_period_seconds = 120
 
   network_configuration {
-    subnet_ids          = module.vpc.private_subnet_ids
+    subnets          = module.vpc.private_subnet_ids
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
   }
