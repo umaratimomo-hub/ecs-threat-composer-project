@@ -20,7 +20,52 @@ module "vpc" {
 # }
 
 
+# Private ECS Fargate Tasks Security Group
+resource "aws_security_group" "ecs_tasks" {
+  name        = "threat-composer-tasks-sg"
+  description = "Isolates containers; only allows traffic from the ALB"
+  vpc_id      = module.vpc.vpc_id
 
+  # Strict Inbound: ONLY traffic originating from ALB Security Group is allowed
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  # Outbound traffic allowed anywhere (to talk to VPC Endpoints / ECR)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "threat-composer-tasks-sg"
+  }
+}
+
+resource "aws_security_group" "vpc_endpoints" {
+  name        = "threat-composer-vpce-sg"
+  description = "Security group for VPC Interface Endpoints"
+  vpc_id      = module.vpc.vpc_id
+
+  tags = {
+    Name = "threat-composer-vpce-sg"
+  }
+}
+
+# This allows your tasks to actually send the traffic to the endpoints
+resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.vpc_endpoints.id
+  source_security_group_id = aws_security_group.ecs_tasks.id
+}
 
 # ------------------------------------------------------------------------------
 # 9. VPC ENDPOINTS (The Private AWS Hallways)
@@ -213,12 +258,12 @@ resource "aws_ecs_service" "app" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = module.alb.target_group_arn
     container_name   = "threat-composer"
     container_port   = 8080
   }
 
-  depends_on = [aws_lb_listener.http]
+  depends_on = [module.alb]
 }
 
 # # ------------------------------------------------------------------------------
