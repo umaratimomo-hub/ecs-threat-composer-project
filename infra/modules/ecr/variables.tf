@@ -1,8 +1,10 @@
-# locals {
-#   subnets = {
-#     "public-a" = { cidr = "10.0.1.0/24", az = "eu-north-1a", public = true }
-#     "public-b" = { cidr = "10.0.2.0/24", az = "eu-north-1b", public = true }
-#     "private-a" = { cidr = "10.0.10.0/24", az = "eu-north-1a", public = false }
-#     "private-b" = { cidr = "10.0.11.0/24", az = "eu-north-1b", public = false }
-#   }
-# }
+variable "ecs-threat-composer-project" {
+  description = "The name of the project, used to name the repository"
+  type        = string
+}
+
+variable "image_mutability" {
+  description = "The tag mutability setting for the repository"
+  type        = string
+  default     = "MUTABLE"
+}

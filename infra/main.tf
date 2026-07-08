@@ -4,11 +4,11 @@ module "vpc" {
   project_name = var.project_name
 }
 
-# module "sgs" {
-#   source       = "./modules/sgs"
-#   vpc_cidr     = "10.0.0.0/16"
+# module "ecr" {
+#   source       = "./modules/ecr"
 #   project_name = var.project_name
 # }
+
 # module "sgs" {
 #   source       = "./modules/sgs"
 #   vpc_cidr     = "10.0.0.0/16"
@@ -393,23 +393,23 @@ resource "aws_ecs_service" "app" {
   depends_on = [aws_lb_listener.http]
 }
 
-# ------------------------------------------------------------------------------
-# 14. ECR CONTAINER REGISTRY (Your Private Image Locker)
-# ------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------
+# # 14. ECR CONTAINER REGISTRY (Your Private Image Locker)
+# # ------------------------------------------------------------------------------
 
-resource "aws_ecr_repository" "app" {
-  name                 = "threat-composer"
-  image_tag_mutability = "MUTABLE"
-  force_delete         = true
+# resource "aws_ecr_repository" "app" {
+#   name                 = "threat-composer"
+#   image_tag_mutability = "MUTABLE"
+#   force_delete         = true
 
-  # This forces AWS to automatically scan your Docker images for known 
-  # security vulnerabilities every single time you push a new build.
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+#   # This forces AWS to automatically scan your Docker images for known 
+#   # security vulnerabilities every single time you push a new build.
+#   image_scanning_configuration {
+#     scan_on_push = true
+#   }
 
-  tags = {
-    Name = "threat-composer-ecr"
-  }
-}
+#   tags = {
+#     Name = "threat-composer-ecr"
+#   }
+# }
 
