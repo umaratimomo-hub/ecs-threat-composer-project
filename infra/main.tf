@@ -31,7 +31,7 @@ resource "aws_security_group" "ecs_tasks" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [module.alb.id]
+    security_groups = [module.alb.alb_security_group_id]
   }
 
   # Outbound traffic allowed anywhere (to talk to VPC Endpoints / ECR)
