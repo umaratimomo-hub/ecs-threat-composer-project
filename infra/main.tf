@@ -1,162 +1,96 @@
-# ------------------------------------------------------------------------------
-# 2. CORE NETWORK (VPC)
-# ------------------------------------------------------------------------------
-
-resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-
-  tags = {
-    Name = "threat-composer-vpc"
-  }
+module "vpc" {
+  source       = "./modules/vpc"
+  vpc_cidr     = "10.0.0.0/16"
+  project_name = var.project_name
 }
 
-# ------------------------------------------------------------------------------
-# 3. PRIVATE SUBNETS (AZ A & B)
-# ------------------------------------------------------------------------------
-
-resource "aws_subnet" "private_a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "eu-north-1a"
-
-  tags = {
-    Name = "threat-composer-private-subnet-a"
-  }
-}
-
-resource "aws_subnet" "private_b" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "eu-north-1b"
-
-  tags = {
-    Name = "threat-composer-private-subnet-b"
-  }
-}
-
-# ------------------------------------------------------------------------------
-# 4. PRIVATE ROUTE TABLE & ASSOCIATIONS
-# ------------------------------------------------------------------------------
-
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "threat-composer-private-rt"
-  }
-}
-
-resource "aws_route_table_association" "private_a" {
-  subnet_id      = aws_subnet.private_a.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_route_table_association" "private_b" {
-  subnet_id      = aws_subnet.private_b.id
-  route_table_id = aws_route_table.private.id
-}
-
-# ------------------------------------------------------------------------------
-# 5. PUBLIC NETWORK INFRASTRUCTURE (For Web Link Access)
-# ------------------------------------------------------------------------------
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "threat-composer-igw"
-  }
-}
-
-resource "aws_subnet" "public_a" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.10.0/24"
-  availability_zone       = "eu-north-1a"
-  map_public_ip_on_launch = true # Public subnets automatically assign public IPs
-
-  tags = {
-    Name = "threat-composer-public-subnet-a"
-  }
-}
-
-resource "aws_subnet" "public_b" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.11.0/24"
-  availability_zone       = "eu-north-1b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "threat-composer-public-subnet-b"
-  }
-}
-
-# ------------------------------------------------------------------------------
-# 6. PUBLIC ROUTE TABLE
-# ------------------------------------------------------------------------------
-
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  # This route directs all outbound traffic to the Internet Gateway
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gw.id
-  }
-
-  tags = {
-    Name = "threat-composer-public-rt"
-  }
-}
-
-resource "aws_route_table_association" "public_a" { #link public subnet A to the public route table
-  subnet_id      = aws_subnet.public_a.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_b" { #link public subnet B to the public route table
-  subnet_id      = aws_subnet.public_b.id
-  route_table_id = aws_route_table.public.id
-}
+# module "sgs" {
+#   source       = "./modules/sgs"
+#   vpc_cidr     = "10.0.0.0/16"
+#   project_name = var.project_name
+# }
+# module "sgs" {
+#   source       = "./modules/sgs"
+#   vpc_cidr     = "10.0.0.0/16"
+#   project_name = var.project_name
+# }
+# module "sgs" {
+#   source       = "./modules/sgs"
+#   vpc_cidr     = "10.0.0.0/16"
+#   project_name = var.project_name
+# }
+# module "sgs" {
+#   source       = "./modules/sgs"
+#   vpc_cidr     = "10.0.0.0/16"
+#   project_name = var.project_name
+# }
+# module "sgs" {
+#   source       = "./modules/sgs"
+#   vpc_cidr     = "10.0.0.0/16"
+#   project_name = var.project_name
+# }
 
 # ------------------------------------------------------------------------------
 # 7. SECURITY GROUPS (Firewalls)
 # ------------------------------------------------------------------------------
 
-# Public Load Balancer Security Group
+
+locals {
+  alb_rules = [
+    { port = 80, protocol = "tcp", cidr = ["0.0.0.0/0"] },
+    { port = 443, protocol = "tcp", cidr = ["0.0.0.0/0"] },
+    { port = 0, protocol = "-1", cidr = ["0.0.0.0/0"] }
+  ]
+}
+
 resource "aws_security_group" "alb" {
-  name        = "threat-composer-alb-sg"
-  description = "Controls access to the public Application Load Balancer"
-  vpc_id      = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
 
-  # Inbound HTTP traffic from anywhere on the internet
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Outbound traffic allowed anywhere (to talk to Fargate tasks)
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "threat-composer-alb-sg"
+  dynamic "ingress" {
+    for_each = local.alb_rules
+    content {
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr
+    }
   }
 }
+
+
+# # Public Load Balancer Security Group
+# resource "aws_security_group" "alb" {
+#   name        = "threat-composer-alb-sg"
+#   description = "Controls access to the public Application Load Balancer"
+#   vpc_id      = aws_vpc.main.id
+
+#   # Inbound HTTP traffic from anywhere on the internet
+#   ingress {
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+
+#   ingress {
+#     from_port   = 8080
+#     to_port     = 8080
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+
+#   # Outbound traffic allowed anywhere (to talk to Fargate tasks)
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+
+#   tags = {
+#     Name = "threat-composer-alb-sg"
+#   }
+# }
 
 # Private ECS Fargate Tasks Security Group
 resource "aws_security_group" "ecs_tasks" {
