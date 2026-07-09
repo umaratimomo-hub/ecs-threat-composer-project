@@ -46,9 +46,6 @@ jobs:
           aws-region: eu-north-1
 
       # Re-initialize with backend enabled to fetch state for the plan
-      - name: Terraform Init (With Backend)
-        run: terraform init -force-copy
-
       - name: Speculative Plan
         id: plan
         run: terraform plan -no-color -input=false -var="project_name=ecs-threat-composer-project"
