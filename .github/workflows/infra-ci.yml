@@ -49,6 +49,6 @@ jobs:
       - name: Terraform Init (With Backend)
         run: terraform init -force-copy
 
-      - name: Speculative Plan
-        id: plan      
+      - name: Proposed Plan
+        id: plan
         run: terraform plan -no-color -input=false -var="project_name=ecs-threat-composer-project"
