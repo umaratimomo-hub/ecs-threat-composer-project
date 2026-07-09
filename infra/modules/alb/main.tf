@@ -2,7 +2,6 @@
 # 7. SECURITY GROUPS (Firewalls)
 # ------------------------------------------------------------------------------
 
-
 # 1. DRY Security Group with dynamic blocks
 resource "aws_security_group" "alb" {
   name        = "${var.project_name}-alb-sg"
