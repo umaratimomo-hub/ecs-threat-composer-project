@@ -49,8 +49,6 @@ resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
 # 9. VPC ENDPOINTS (The Private AWS Hallways)
 # ------------------------------------------------------------------------------
 
-data "aws_region" "current" {}
-
 # S3 Gateway Endpoint (FREE)
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = var.vpc_id
