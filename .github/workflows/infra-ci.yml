@@ -48,7 +48,6 @@ jobs:
       # Re-initialize with backend enabled to fetch state for the plan
       - name: Terraform Init (With Backend)
         run: terraform init -force-copy
-
         
       - name: Speculative Plan
         id: plan
