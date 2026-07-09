@@ -1,5 +1,5 @@
-variable "ecs-threat-composer-project" {
-  description = "The name of the project, used to name the repository"
+variable "repository_name" {
+  description = "The exact name of the ECR repository"
   type        = string
 }
 

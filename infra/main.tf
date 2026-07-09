@@ -4,93 +4,23 @@ module "vpc" {
   project_name = var.project_name
 }
 
-# module "ecr" {
-#   source       = "./modules/ecr"
-#   project_name = var.project_name
-# }
-
-# module "sgs" {
-#   source       = "./modules/sgs"
-#   vpc_cidr     = "10.0.0.0/16"
-#   project_name = var.project_name
-# }
-# module "sgs" {
-#   source       = "./modules/sgs"
-#   vpc_cidr     = "10.0.0.0/16"
-#   project_name = var.project_name
-# }
-# module "sgs" {
-#   source       = "./modules/sgs"
-#   vpc_cidr     = "10.0.0.0/16"
-#   project_name = var.project_name
-# }
-# module "sgs" {
-#   source       = "./modules/sgs"
-#   vpc_cidr     = "10.0.0.0/16"
-#   project_name = var.project_name
-# }
-
-# ------------------------------------------------------------------------------
-# 7. SECURITY GROUPS (Firewalls)
-# ------------------------------------------------------------------------------
-
-
-locals {
-  alb_rules = [
-    { port = 80, protocol = "tcp", cidr = ["0.0.0.0/0"] },
-    { port = 443, protocol = "tcp", cidr = ["0.0.0.0/0"] },
-    { port = 0, protocol = "-1", cidr = ["0.0.0.0/0"] }
-  ]
+module "ecr" {
+  source          = "./modules/ecr"
+  repository_name = "ecs-threat-composer-project"
 }
 
-resource "aws_security_group" "alb" {
-  vpc_id = module.vpc.vpc_id
-
-  dynamic "ingress" {
-    for_each = local.alb_rules
-    content {
-      from_port   = ingress.value.port
-      to_port     = ingress.value.port
-      protocol    = ingress.value.protocol
-      cidr_blocks = ingress.value.cidr
-    }
-  }
+module "alb" {
+  source            = "./modules/alb"
+  project_name      = var.project_name
+  vpc_id            = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
 }
 
-
-# # Public Load Balancer Security Group
-# resource "aws_security_group" "alb" {
-#   name        = "threat-composer-alb-sg"
-#   description = "Controls access to the public Application Load Balancer"
-#   vpc_id      = module.vpc.vpc_id
-
-#   # Inbound HTTP traffic from anywhere on the internet
-#   ingress {
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   ingress {
-#     from_port   = 8080
-#     to_port     = 8080
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   # Outbound traffic allowed anywhere (to talk to Fargate tasks)
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   tags = {
-#     Name = "threat-composer-alb-sg"
-#   }
+# module "ecs" {
+#   source       = "./modules/ecs"
+#   project_name = var.project_name
 # }
+
 
 # Private ECS Fargate Tasks Security Group
 resource "aws_security_group" "ecs_tasks" {
@@ -103,7 +33,7 @@ resource "aws_security_group" "ecs_tasks" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [module.alb.alb_security_group_id]
   }
 
   # Outbound traffic allowed anywhere (to talk to VPC Endpoints / ECR)
@@ -137,61 +67,6 @@ resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.vpc_endpoints.id
   source_security_group_id = aws_security_group.ecs_tasks.id
-}
-
-# ------------------------------------------------------------------------------
-# 8. APPLICATION LOAD BALANCER (The Web Link Front-Door)
-# ------------------------------------------------------------------------------
-
-resource "aws_lb" "main" {
-  name               = "${var.project_name}-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb.id]
-  subnets            = module.vpc.public_subnet_ids
-
-  tags = {
-    Name = "${var.project_name}-alb"
-  }
-}
-
-resource "aws_lb_target_group" "app" {
-  name        = "threat-composer-tg"
-  port        = 8080
-  protocol    = "HTTP"
-  vpc_id      = module.vpc.vpc_id
-  target_type = "ip" # Fargate requires 'ip' target type
-
-  deregistration_delay = 60
-
-  health_check {
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 5
-    interval            = 30
-    path                = "/"
-    protocol            = "HTTP"
-    matcher             = "200-399"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  tags = {
-    Name = "threat-composer-tg"
-  }
-}
-
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.main.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
-  }
 }
 
 # ------------------------------------------------------------------------------
@@ -385,12 +260,12 @@ resource "aws_ecs_service" "app" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = module.alb.target_group_arn
     container_name   = "threat-composer"
     container_port   = 8080
   }
 
-  depends_on = [aws_lb_listener.http]
+  depends_on = [module.alb]
 }
 
 # # ------------------------------------------------------------------------------
