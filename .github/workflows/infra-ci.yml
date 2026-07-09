@@ -49,7 +49,5 @@ jobs:
       - name: Terraform Init (With Backend)
         run: terraform init -force-copy
 
-      - name: Speculative Plan
-        id: plan
-        run: terraform plan -no-color -input=false -var="project_name=ecs-threat-composer-project"
-        
+      - name: Force Unlock State
+        run: terraform force-unlock -force b6295da9-573e-02b1-5dcb-e337715ffc6d
