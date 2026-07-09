@@ -48,7 +48,7 @@ resource "aws_lb" "main" {
   }
 }
 
-# 3. Target Group (routes to the ECS container tasks)
+# 3. Target Group (routes to ECS container tasks)
 resource "aws_lb_target_group" "app" {
   name        = "${var.project_name}-tg"
   port        = 80
