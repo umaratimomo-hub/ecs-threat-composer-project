@@ -6,7 +6,7 @@ module "vpc" {
 
 module "ecr" {
   source          = "./modules/ecr"
-  repository_name = var.project_name #"ecs-threat-composer-project"
+  project_name = var.project_name #"ecs-threat-composer-project"
 }
 
 module "alb" {
