@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "app" {
-  name                 = var.repository_name
+  name                 = var.project_name
   image_tag_mutability = var.image_mutability
 
   image_scanning_configuration {
@@ -7,7 +7,7 @@ resource "aws_ecr_repository" "app" {
   }
 
   tags = {
-    Name = var.repository_name
+    Name = var.project_name
   }
 }
 
