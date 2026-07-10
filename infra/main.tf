@@ -5,7 +5,7 @@ module "vpc" {
 }
 
 module "ecr" {
-  source          = "./modules/ecr"
+  source       = "./modules/ecr"
   project_name = var.project_name #"ecs-threat-composer-project"
 }
 
