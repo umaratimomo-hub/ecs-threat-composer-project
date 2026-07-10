@@ -1,13 +1,4 @@
 # ------------------------------------------------------------------------------
-# 0. DATA SOURCES
-# ------------------------------------------------------------------------------
-
-# This automatically gets the available AZs in the current region
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-# ------------------------------------------------------------------------------
 # 1. CORE NETWORK (VPC)
 # ------------------------------------------------------------------------------
 
@@ -21,34 +12,6 @@ resource "aws_vpc" "main" {
   }
 }
 
-locals {
-  subnets = {
-    "public-a" = {
-      # 10.0.0.0/16 + 8 bits, Network #1 -> 10.0.1.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 1)
-      az     = data.aws_availability_zones.available.names[0]
-      public = true
-    }
-    "public-b" = {
-      # Network #2 -> 10.0.2.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 2)
-      az     = data.aws_availability_zones.available.names[1]
-      public = true
-    }
-    "private-a" = {
-      # Network #10 -> 10.0.10.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 10)
-      az     = data.aws_availability_zones.available.names[0]
-      public = false
-    }
-    "private-b" = {
-      # Network #11 -> 10.0.11.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 11)
-      az     = data.aws_availability_zones.available.names[1]
-      public = false
-    }
-  }
-}
 
 resource "aws_subnet" "network" {
   for_each = local.subnets
