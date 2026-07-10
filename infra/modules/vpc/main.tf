@@ -23,29 +23,29 @@ resource "aws_vpc" "main" {
 
 locals {
   subnets = {
-    "public-a" = { 
+    "public-a" = {
       # 10.0.0.0/16 + 8 bits, Network #1 -> 10.0.1.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 1)  
-      az     = data.aws_availability_zones.available.names[0] 
-      public = true 
+      cidr   = cidrsubnet(var.vpc_cidr, 8, 1)
+      az     = data.aws_availability_zones.available.names[0]
+      public = true
     }
-    "public-b" = { 
+    "public-b" = {
       # Network #2 -> 10.0.2.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 2)  
-      az     = data.aws_availability_zones.available.names[1] 
-      public = true 
+      cidr   = cidrsubnet(var.vpc_cidr, 8, 2)
+      az     = data.aws_availability_zones.available.names[1]
+      public = true
     }
-    "private-a" = { 
+    "private-a" = {
       # Network #10 -> 10.0.10.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 10) 
-      az     = data.aws_availability_zones.available.names[0] 
-      public = false 
+      cidr   = cidrsubnet(var.vpc_cidr, 8, 10)
+      az     = data.aws_availability_zones.available.names[0]
+      public = false
     }
-    "private-b" = { 
+    "private-b" = {
       # Network #11 -> 10.0.11.0/24
-      cidr   = cidrsubnet(var.vpc_cidr, 8, 11) 
-      az     = data.aws_availability_zones.available.names[1] 
-      public = false 
+      cidr   = cidrsubnet(var.vpc_cidr, 8, 11)
+      az     = data.aws_availability_zones.available.names[1]
+      public = false
     }
   }
 }
