@@ -36,9 +36,9 @@ resource "aws_ecr_lifecycle_policy" "cleanup" {
         rulePriority = 2
         description  = "Keep the last ${var.tagged_image_retention} formally tagged images"
         selection = {
-          tagStatus   = "tagged"
+          tagStatus = "tagged"
           # ECR requires a prefix list when using 'tagged', a wildcard keeps them all in scope
-          tagPrefixList = ["v", "latest", "prod", "dev", "threat-composer"] 
+          tagPrefixList = ["v", "latest", "prod", "dev", "threat-composer"]
           countType     = "imageCountMoreThan"
           countNumber   = var.tagged_image_retention
         }

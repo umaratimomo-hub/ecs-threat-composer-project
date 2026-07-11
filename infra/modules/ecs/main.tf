@@ -135,7 +135,7 @@ resource "aws_ecs_cluster" "main" {
 
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/ecs/${var.project_name}"
-  retention_in_days = 7 
+  retention_in_days = 7
 }
 
 # ==============================================================================
@@ -183,7 +183,7 @@ resource "aws_iam_role" "ecs_task_role" {
 
 resource "aws_ecs_task_definition" "app" {
   family                   = var.project_name
-  network_mode             = "awsvpc" 
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.container_cpu
   memory                   = var.container_memory
@@ -192,7 +192,7 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([
     {
-      name      = var.project_name
+      name = var.project_name
       # Dynamically maps account ID, region, and project repo name:
       image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.project_name}:latest"
       essential = true

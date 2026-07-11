@@ -5,7 +5,7 @@ provider "aws" {
     tags = {
       Environment = "Dev"
       Project     = "ThreatComposer"
-      Repository   = "ecs-threat-composer-project"
+      Repository  = "ecs-threat-composer-project"
       ManagedBy   = "Terraform"
     }
   }
