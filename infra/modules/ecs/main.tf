@@ -1,13 +1,17 @@
+# ==============================================================================
+# SECURITY GROUPS & RULES
+# ==============================================================================
+
 # Private ECS Fargate Tasks Security Group
 resource "aws_security_group" "ecs_tasks" {
-  name        = "threat-composer-tasks-sg"
+  name        = "${var.project_name}-tasks-sg"
   description = "Isolates containers; only allows traffic from the ALB"
   vpc_id      = var.vpc_id
 
   # Strict Inbound: ONLY traffic originating from ALB Security Group is allowed
   ingress {
-    from_port       = 8080
-    to_port         = 8080
+    from_port       = var.app_port
+    to_port         = var.app_port
     protocol        = "tcp"
     security_groups = [var.alb_security_group_id]
   }
@@ -21,21 +25,21 @@ resource "aws_security_group" "ecs_tasks" {
   }
 
   tags = {
-    Name = "threat-composer-tasks-sg"
+    Name = "${var.project_name}-tasks-sg"
   }
 }
 
 resource "aws_security_group" "vpc_endpoints" {
-  name        = "threat-composer-vpce-sg"
+  name        = "${var.project_name}-vpce-sg"
   description = "Security group for VPC Interface Endpoints"
   vpc_id      = var.vpc_id
 
   tags = {
-    Name = "threat-composer-vpce-sg"
+    Name = "${var.project_name}-vpce-sg"
   }
 }
 
-# This allows your tasks to actually send the traffic to the endpoints
+# This allows your tasks to actually send traffic to the endpoints
 resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
   type                     = "ingress"
   from_port                = 443
@@ -45,14 +49,14 @@ resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
   source_security_group_id = aws_security_group.ecs_tasks.id
 }
 
-# ------------------------------------------------------------------------------
-# 9. VPC ENDPOINTS (The Private AWS Hallways)
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# VPC ENDPOINTS (The Private AWS Hallways)
+# ==============================================================================
 
 # S3 Gateway Endpoint (FREE)
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [var.private_route_table_id]
 }
@@ -60,7 +64,7 @@ resource "aws_vpc_endpoint" "s3" {
 # ECR API
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.api"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -70,7 +74,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 # ECR DKR (REQUIRED FOR IMAGE PULL)
 resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.ecr.dkr"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -80,7 +84,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 # CloudWatch Logs
 resource "aws_vpc_endpoint" "logs" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.logs"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.logs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -90,7 +94,7 @@ resource "aws_vpc_endpoint" "logs" {
 # ECS Agent & Telemetry
 resource "aws_vpc_endpoint" "ecs_agent" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-agent"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs-agent"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -99,7 +103,7 @@ resource "aws_vpc_endpoint" "ecs_agent" {
 
 resource "aws_vpc_endpoint" "ecs_telemetry" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs-telemetry"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs-telemetry"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -109,19 +113,19 @@ resource "aws_vpc_endpoint" "ecs_telemetry" {
 # ECS API
 resource "aws_vpc_endpoint" "ecs" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.region}.ecs"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
 
-# ------------------------------------------------------------------------------
-# 10. ECS CLUSTER & LOGGING
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# ECS CLUSTER & LOGGING
+# ==============================================================================
 
 resource "aws_ecs_cluster" "main" {
-  name = "threat-composer-cluster"
+  name = "${var.project_name}-cluster"
 
   setting {
     name  = "containerInsights"
@@ -130,17 +134,16 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "/ecs/threat-composer"
-  retention_in_days = 7 # Automatically purges old logs to keep costs at zero
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 7
 }
 
-# ------------------------------------------------------------------------------
-# 11. IAM ROLES (Fargate Permissions)
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# IAM ROLES (Fargate Permissions)
+# ==============================================================================
 
-# Execution Role: Gives the AWS Fargate Agent permission to pull from ECR and write to CloudWatch
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "threat-composer-ecs-execution-role"
+  name = "${var.project_name}-ecs-execution-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -159,9 +162,8 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# Task Role: Gives the actual containers inside the pod permissions to talk to other AWS services if needed
 resource "aws_iam_role" "ecs_task_role" {
-  name = "threat-composer-ecs-task-role"
+  name = "${var.project_name}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -175,29 +177,30 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 }
 
-# ------------------------------------------------------------------------------
-# 12. ECS TASK DEFINITION (The Container Blueprint)
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# ECS TASK DEFINITION
+# ==============================================================================
 
 resource "aws_ecs_task_definition" "app" {
-  family                   = "threat-composer"
-  network_mode             = "awsvpc" # REQUIRED for Fargate
+  family                   = var.project_name
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256" # 0.25 vCPU (Lowest tier = lowest cost)
-  memory                   = "512" # 512MB RAM
+  cpu                      = var.container_cpu
+  memory                   = var.container_memory
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
-      name      = "threat-composer"
-      image     = "526644151787.dkr.ecr.eu-north-1.amazonaws.com/threat-composer:latest"
+      name = var.project_name
+      # Dynamically maps account ID, region, and project repo name:
+      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.project_name}:latest"
       essential = true
 
       portMappings = [
         {
-          containerPort = 8080
-          hostPort      = 8080
+          containerPort = var.app_port
+          hostPort      = var.app_port
           protocol      = "tcp"
         }
       ]
@@ -206,7 +209,7 @@ resource "aws_ecs_task_definition" "app" {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
-          "awslogs-region"        = data.aws_region.current.region
+          "awslogs-region"        = data.aws_region.current.name
           "awslogs-stream-prefix" = "app"
         }
       }
@@ -214,9 +217,9 @@ resource "aws_ecs_task_definition" "app" {
   ])
 }
 
-# ------------------------------------------------------------------------------
-# 13. ECS SERVICE (The Orchestrator)
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# ECS SERVICE
+# ==============================================================================
 
 resource "aws_ecs_service" "app" {
   name            = "${var.project_name}-service"
@@ -235,7 +238,7 @@ resource "aws_ecs_service" "app" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = "threat-composer"
-    container_port   = 8080
+    container_name   = var.project_name
+    container_port   = var.app_port
   }
 }

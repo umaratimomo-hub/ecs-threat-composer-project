@@ -24,3 +24,33 @@ variable "route53_zone_id" {
   type        = string
   default     = ""
 }
+
+variable "app_port" {
+  type        = number
+  description = "The port the application backend listens on"
+  default     = 80
+}
+
+variable "http_port" {
+  type        = number
+  description = "The standard HTTP listener port"
+  default     = 80
+}
+
+variable "https_port" {
+  type        = number
+  description = "The standard HTTPS listener port"
+  default     = 443
+}
+
+variable "health_check_path" {
+  type        = string
+  description = "The endpoint the ALB pings to check container health"
+  default     = "/"
+}
+
+variable "ssl_policy" {
+  type        = string
+  description = "The security policy for the ALB HTTPS listener"
+  default     = "ELBSecurityPolicy-2020-14" # Updated to a more modern, secure default
+}

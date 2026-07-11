@@ -1,10 +1,11 @@
 provider "aws" {
-  region = "eu-north-1"
+  region = var.aws_region
 
   default_tags {
     tags = {
       Environment = "Dev"
       Project     = "ThreatComposer"
+      Repository  = "ecs-threat-composer-project"
       ManagedBy   = "Terraform"
     }
   }
