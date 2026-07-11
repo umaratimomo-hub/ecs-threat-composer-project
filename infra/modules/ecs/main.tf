@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "allow_tasks_to_endpoints" {
 # S3 Gateway Endpoint (FREE)
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.current.id}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [var.private_route_table_id]
 }
@@ -64,7 +64,7 @@ resource "aws_vpc_endpoint" "s3" {
 # ECR API
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.api"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -74,7 +74,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 # ECR DKR (REQUIRED FOR IMAGE PULL)
 resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -84,7 +84,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 # CloudWatch Logs
 resource "aws_vpc_endpoint" "logs" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.logs"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.logs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -94,7 +94,7 @@ resource "aws_vpc_endpoint" "logs" {
 # ECS Agent & Telemetry
 resource "aws_vpc_endpoint" "ecs_agent" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs-agent"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.ecs-agent"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -103,7 +103,7 @@ resource "aws_vpc_endpoint" "ecs_agent" {
 
 resource "aws_vpc_endpoint" "ecs_telemetry" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs-telemetry"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.ecs-telemetry"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -113,7 +113,7 @@ resource "aws_vpc_endpoint" "ecs_telemetry" {
 # ECS API
 resource "aws_vpc_endpoint" "ecs" {
   vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecs"
+  service_name        = "com.amazonaws.${data.aws_region.current.id}.ecs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   subnet_ids          = var.private_subnet_ids
@@ -194,7 +194,7 @@ resource "aws_ecs_task_definition" "app" {
     {
       name = var.project_name
       # Dynamically maps account ID, region, and project repo name:
-      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.project_name}:latest"
+      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.id}.amazonaws.com/${var.project_name}:latest"
       essential = true
 
       portMappings = [
@@ -209,7 +209,7 @@ resource "aws_ecs_task_definition" "app" {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
-          "awslogs-region"        = data.aws_region.current.name
+          "awslogs-region"        = data.aws_region.current.id
           "awslogs-stream-prefix" = "app"
         }
       }
