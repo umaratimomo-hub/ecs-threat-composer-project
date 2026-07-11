@@ -46,6 +46,11 @@ variable "container_memory" {
   default     = "512"
 }
 
+variable "repository_url" {
+  description = "The URL of the ECR repository"
+  type        = string
+}
+
 
 
 

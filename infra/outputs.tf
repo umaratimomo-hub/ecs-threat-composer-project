@@ -5,7 +5,7 @@ output "alb_url" {
 
 output "ecr_repository_url" {
   description = "The URL for your ECR repository (use this for 'docker push')"
-  value       = module.ecr.repository_url
+  value = data.aws_ecr_repository.app_repo.repository_url
 }
 
 output "ecs_cluster_name" {
