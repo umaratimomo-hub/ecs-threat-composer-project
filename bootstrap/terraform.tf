@@ -8,3 +8,12 @@ terraform {
     }
   }
 }
+
+# migrate local state to the S3 bucket after apply.
+  #
+  # backend "s3" {
+  #   bucket         = "threat-composer-tf-state-umara-13245"
+  #   key            = "bootstrap/terraform.tfstate"
+  #   region         = "eu-north-1"
+  #   encrypt        = true
+  # }

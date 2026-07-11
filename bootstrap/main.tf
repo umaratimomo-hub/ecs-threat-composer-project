@@ -30,3 +30,13 @@ resource "aws_s3_bucket_public_access_block" "terraform_state_access" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+# 2. ECR Repository
+resource "aws_ecr_repository" "app_repo" {
+  name                 = "threat-composer-app"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
