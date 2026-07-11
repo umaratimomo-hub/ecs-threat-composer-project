@@ -28,6 +28,23 @@ variable "target_group_arn" {
   type        = string
 }
 
+variable "app_port" {
+  type        = number
+  description = "The port the container listens on (e.g., 8080 or 80)"
+  default     = 8080
+}
+
+variable "container_cpu" {
+  type        = string
+  description = "Fargate vCPU units (256, 512, 1024, etc.)"
+  default     = "256"
+}
+
+variable "container_memory" {
+  type        = string
+  description = "Fargate memory limits (512, 1024, 2048, etc.)"
+  default     = "512"
+}
 
 
 

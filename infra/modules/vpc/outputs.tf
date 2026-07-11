@@ -4,7 +4,7 @@ output "vpc_id" {
 }
 
 output "private_route_table_id" {
-  description = "The ID of the private route table"
+  description = "Route table ID for VPC endpoints"
   value       = aws_route_table.private.id
 }
 
@@ -17,9 +17,14 @@ output "public_subnet_ids" {
 }
 
 output "private_subnet_ids" {
-  description = "List of private subnet IDs for ECS and VPC Endpoints"
-  value = [
-    aws_subnet.network["private-a"].id,
-    aws_subnet.network["private-b"].id
-  ]
+  description = "List of private subnet IDs for ECS tasks"
+  value       = [for s in aws_subnet.network : s.id if s.map_public_ip_on_launch == false]
 }
+
+# output "private_subnet_ids" {
+#   description = "List of private subnet IDs for ECS and VPC Endpoints"
+#   value = [
+#     aws_subnet.network["private-a"].id,
+#     aws_subnet.network["private-b"].id
+#   ]
+# }
