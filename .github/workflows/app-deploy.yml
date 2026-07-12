@@ -47,8 +47,8 @@ jobs:
       - name: Build Application
         working-directory: ./app
         run: |
-          npm ci
-          npm run build
+          yarn install --frozen-lockfile
+          yarn build
 
       # 3. Log in to your Bootstrap ECR Registry
       - name: Log in to Amazon ECR
