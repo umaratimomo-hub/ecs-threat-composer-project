@@ -15,7 +15,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # 4. Copy your PRE-BUILT assets directly from your local host machine
 # (Change "build" to "dist" if your local build script outputs to a dist/ folder)
-COPY build /usr/share/nginx/html
+COPY app/build /usr/share/nginx/html
 
 EXPOSE 8080
 

@@ -36,17 +36,16 @@ jobs:
           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
           aws-region: ${{ env.AWS_REGION }}
 
-       # ... (Previous steps: Checkout, Hadolint, AWS Auth) ...
-
-      # NEW: Set up Node.js (Adjust version if necessary)
+      # Set up Node.js (Adjust version if necessary)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # NEW: Install dependencies and build the app
+      # Install dependencies and build the app
       # This generates the "build/" or "dist/" folder on the runner
       - name: Build Application
+        working-directory: ./app
         run: |
           npm ci
           npm run build
