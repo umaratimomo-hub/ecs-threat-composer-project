@@ -1,0 +1,37 @@
+# name: Terraform CI (Verify & Speculative Plan)
+
+# # 1. Trigger on Pull Requests to main when infrastructure files change
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - 'infra/**'
+
+# permissions:
+#   id-token: write   # Required for requesting the JWT to authenticate with AWS
+#   contents: read    # Required for actions/checkout
+
+# jobs:
+#   validate-and-plan:
+#     - name: Setup TFLint
+#         uses: terraform-linters/setup-tflint@v4
+#         with:
+#           tflint_version: latest
+
+#       - name: Init TFLint
+#         run: tflint --init
+#         env:
+#           GITHUB_TOKEN: ${{ github.token }}
+
+#       - name: Run TFLint
+#         run: tflint -f compact
+
+#    - name: Run Trivy vulnerability scanner in IaC mode
+#         uses: aquasecurity/trivy-action@master
+#         with:
+#           scan-type: 'config'
+#           hide-progress: false
+#           format: 'table'
+#           exit-code: '1' # Fails the pipeline if vulnerabilities are found
+#           ignore-unfixed: true
