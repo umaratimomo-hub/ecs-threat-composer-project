@@ -9,9 +9,9 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 # This is the file containing your global settings (like 'pid /tmp/nginx.pid;')
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# 3. Copy your clean server-block configuration to conf.d
-# This file handles routing and has NO pid directive, preventing context crashes
-COPY clean_default.conf /etc/nginx/conf.d/default.conf  
+# # 3. Copy your clean server-block configuration to conf.d
+# # This file handles routing and has NO pid directive, preventing context crashes
+# COPY clean_default.conf /etc/nginx/conf.d/default.conf  
 
 # 4. Copy your PRE-BUILT assets directly from your local host machine
 # (Change "build" to "dist" if your local build script outputs to a dist/ folder)
