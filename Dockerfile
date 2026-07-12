@@ -7,13 +7,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy only the package files first to leverage Docker cache
-COPY package.json yarn.lock ./
+COPY app/package.json app/yarn.lock ./
 
-# Install dependencies using Yarn
 RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application code
-COPY . .
+COPY app/ ./
 
 # Build the application (this creates the build/ or dist/ folder)
 RUN yarn build
