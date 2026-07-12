@@ -42,14 +42,6 @@ jobs:
         with:
           node-version: '20'
 
-      # Install dependencies and build the app
-      # This generates the "build/" or "dist/" folder on the runner
-      - name: Build Application
-        working-directory: ./app
-        run: |
-          yarn install --frozen-lockfile
-          yarn build
-
       # 3. Log in to your Bootstrap ECR Registry
       - name: Log in to Amazon ECR
         id: login-ecr

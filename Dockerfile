@@ -1,29 +1,34 @@
-# ---- Runtime stage ----
-# Using the unprivileged Alpine image for an excellent production security footprint
-FROM nginxinc/nginx-unprivileged:alpine
+# ==========================================
+# Stage 1: Build the Application
+# ==========================================
+FROM node:20-alpine AS builder
 
-# 1. Remove the standard boilerplate default configuration
-RUN rm -f /etc/nginx/conf.d/default.conf
+# Set the working directory inside the container
+WORKDIR /app
 
-# 2. Copy your custom MAIN nginx.conf to its correct global location
-# This is the file containing your global settings (like 'pid /tmp/nginx.pid;')
+# Copy only the package files first to leverage Docker cache
+COPY package.json yarn.lock ./
+
+# Install dependencies using Yarn
+RUN yarn install --frozen-lockfile
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application (this creates the build/ or dist/ folder)
+RUN yarn build
+
+# ==========================================
+# Stage 2: Serve with Nginx
+# ==========================================
+FROM docker.io/nginxinc/nginx-unprivileged:alpine
+
+# Copy your custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# # 3. Copy your clean server-block configuration to conf.d
-# # This file handles routing and has NO pid directive, preventing context crashes
-# COPY clean_default.conf /etc/nginx/conf.d/default.conf  
+# Copy ONLY the compiled assets from the 'builder' stage
+# (Adjust /app/build to /app/dist if your app outputs a dist folder)
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# 4. Copy your PRE-BUILT assets directly from your local host machine
-# (Change "build" to "dist" if your local build script outputs to a dist/ folder)
-COPY app/build /usr/share/nginx/html
-
+# Expose the unprivileged port
 EXPOSE 8080
-
-# Improved Healthcheck: Use the -T option to specify timeout
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/health || exit 1
-
-    
-# Run as unprivileged user (Nginx unprivileged image standard)
-USER 101
-CMD ["nginx", "-g", "daemon off;"]
