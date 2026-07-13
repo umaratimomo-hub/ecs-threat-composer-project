@@ -22,7 +22,7 @@ RUN yarn build
 FROM docker.io/nginxinc/nginx-unprivileged:alpine
 
 # Copy your custom Nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy ONLY the compiled assets from the 'builder' stage
 # (Adjust /app/build to /app/dist if your app outputs a dist folder)
