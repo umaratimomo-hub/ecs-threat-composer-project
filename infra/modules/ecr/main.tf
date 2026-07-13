@@ -1,9 +1,9 @@
 resource "aws_ecr_repository" "app_repo" {
   name                 = var.repository_name
   image_tag_mutability = "MUTABLE"
-  
+
   # This tells AWS: "Delete the repo even if it has images inside"
-  force_delete         = true
+  force_delete = true
 }
 
 # Push a placeholder image immediately

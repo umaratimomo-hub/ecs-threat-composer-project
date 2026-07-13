@@ -4,7 +4,7 @@ output "alb_url" {
 }
 
 output "ecr_url" {
-  value = module.ecr.repository_url
+  value       = module.ecr.repository_url
   description = "The URL of the ECR repository"
 }
 

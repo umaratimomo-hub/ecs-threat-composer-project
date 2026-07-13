@@ -31,7 +31,7 @@ module "ecr" {
 
 # module "ecs" {
 #   source = "./modules/ecs"
-  
+
 #   # Pass the value from the ecr module into the variable expected by the ecs module
 #   ecr_image_url = "${module.ecr.repository_url}" 
 # }
