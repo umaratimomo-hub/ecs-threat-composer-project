@@ -8,6 +8,9 @@ resource "aws_ecr_repository" "app_repo" {
 
 # Push a placeholder image immediately
 resource "null_resource" "push_placeholder_image" {
+    triggers = {
+    repository_url = aws_ecr_repository.app_repo.repository_url
+    
   # Script runs on local machine during 'terraform apply'
   provisioner "local-exec" {
     # Uses && to chain commands together to avoid windows line ending problems
