@@ -192,8 +192,8 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([
     {
-      name = var.project_name
-      image = "${var.repository_url}:latest"
+      name      = "threat-composer-container"
+      image     = "${var.repository_url}:latest"
       essential = true
 
       portMappings = [
