@@ -1,9 +1,15 @@
 name: App Deploy
 
 on:
+  workflow_run:
+    workflows: ["Terraform Infra Deploy"]
+    types:
+      - completed
   push:
     branches:
       - main
+    paths:
+      - 'app/**' # Only run if app code changes
 
 # Required for AWS OIDC authentication
 permissions:

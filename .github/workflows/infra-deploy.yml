@@ -1,37 +1,56 @@
-# name: Terraform CI (Verify & Speculative Plan)
+name: 'Terraform Infra Deploy'
 
-# # 1. Trigger on Pull Requests to main when infrastructure files change
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'infra/**'
+on:
+  workflow_dispatch: # Manual trigger
 
-# permissions:
-#   id-token: write   # Required for requesting the JWT to authenticate with AWS
-#   contents: read    # Required for actions/checkout
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read
 
-# jobs:
-#   validate-and-plan:
-#     - name: Setup TFLint
-#         uses: terraform-linters/setup-tflint@v4
-#         with:
-#           tflint_version: latest
+jobs:
+  validate-and-plan:
+    name: 'Validate and Plan'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra # <--- NOTE: Ensure this matches your directory name!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+          aws-region: eu-north-1
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      # Include your TFLint and Trivy steps here as discussed before...
+      
+      - name: Terraform Plan
+        run: terraform plan -input=false
 
-#       - name: Init TFLint
-#         run: tflint --init
-#         env:
-#           GITHUB_TOKEN: ${{ github.token }}
+  deploy:
+    name: 'Deploy Infrastructure'
+    needs: validate-and-plan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+          aws-region: eu-north-1
 
-#       - name: Run TFLint
-#         run: tflint -f compact
+      - name: Terraform Init
+        run: terraform init
 
-#    - name: Run Trivy vulnerability scanner in IaC mode
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#           scan-type: 'config'
-#           hide-progress: false
-#           format: 'table'
-#           exit-code: '1' # Fails the pipeline if vulnerabilities are found
-#           ignore-unfixed: true
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false
+
