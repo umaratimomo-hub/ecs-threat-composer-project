@@ -192,7 +192,7 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([
     {
-      name      = "threat-composer-container"
+      name      = var.project_name
       image     = "${var.repository_url}:latest"
       essential = true
 
