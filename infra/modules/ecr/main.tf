@@ -10,17 +10,8 @@ resource "aws_ecr_repository" "app_repo" {
 resource "null_resource" "push_placeholder_image" {
   # Script runs on local machine during 'terraform apply'
   provisioner "local-exec" {
-    command = <<EOT
-      # Authenticate Docker with ECR registry
-      aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.app_repo.repository_url}
-      
-      # Pull a tiny dummy image from Docker Hub
-      docker pull alpine:latest
-      
-      # Tag it for your ECR and push it as 'latest'
-      docker tag alpine:latest ${aws_ecr_repository.app_repo.repository_url}:latest
-      docker push ${aws_ecr_repository.app_repo.repository_url}:latest
-    EOT
+    # Uses && to chain commands together to avoid windows line ending problems
+    command = "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.app_repo.repository_url} && docker pull alpine:latest && docker tag alpine:latest ${aws_ecr_repository.app_repo.repository_url}:latest && docker push ${aws_ecr_repository.app_repo.repository_url}:latest"
   }
 
   # Ensure the repository exists before trying to push to it
