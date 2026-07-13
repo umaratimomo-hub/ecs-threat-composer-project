@@ -1,56 +1,104 @@
-name: 'Terraform Infra Deploy'
+name: Infrastructure Deploy
 
+# 1. Triggers on merges to main (only for infra changes) OR manual clicks
 on:
-  workflow_dispatch: # Manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/**'
+  workflow_dispatch: 
 
 permissions:
-  id-token: write   # Required for OIDC
+  id-token: write   # Required to securely request the JWT from GitHub
   contents: read
 
 jobs:
-  validate-and-plan:
-    name: 'Validate and Plan'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra # <--- NOTE: Ensure this matches your directory name!
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-          aws-region: eu-north-1
-      
-      - name: Terraform Init
-        run: terraform init
-      
-      # Include your TFLint and Trivy steps here as discussed before...
-      
-      - name: Terraform Plan
-        run: terraform plan -input=false
-
   deploy:
-    name: 'Deploy Infrastructure'
-    needs: validate-and-plan
+    name: Apply Infrastructure
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    
+    # 2. Ensures all commands run inside your Terraform folder
     defaults:
       run:
         working-directory: infra
+        
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # 3. Authenticate with AWS via your OIDC role
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
           aws-region: eu-north-1
 
+      # 4. Initialize the S3 backend
       - name: Terraform Init
         run: terraform init
 
+      # 5. Execute the deployment! 
+      # (-auto-approve is safe here because PRs are strictly reviewed via infra-ci.yml)
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
+
+# name: 'Terraform Infra Deploy'
+
+# on:
+#   workflow_dispatch: # Manual trigger
+
+# permissions:
+#   id-token: write   # Required for OIDC
+#   contents: read
+
+# jobs:
+#   validate-and-plan:
+#     name: 'Validate and Plan'
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: infra
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: hashicorp/setup-terraform@v3
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+#           aws-region: eu-north-1
+      
+#       - name: Terraform Init
+#         run: terraform init
+      
+#       # Include your TFLint and Trivy steps here as discussed before...
+      
+#       - name: Terraform Plan
+#         run: terraform plan -input=false
+
+#   deploy:
+#     name: 'Deploy Infrastructure'
+#     needs: validate-and-plan
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/main'
+#     defaults:
+#       run:
+#         working-directory: infra
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: hashicorp/setup-terraform@v3
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
+#           aws-region: eu-north-1
+
+#       - name: Terraform Init
+#         run: terraform init
+
+#       - name: Terraform Apply
+#         run: terraform apply -auto-approve -input=false
 

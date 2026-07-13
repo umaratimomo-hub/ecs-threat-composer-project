@@ -1,0 +1,45 @@
+name: Infrastructure Bootstrap
+
+on:
+  workflow_dispatch: # Allows manual triggering only from the GitHub Actions UI
+
+env:
+  AWS_REGION: eu-north-1
+  # S3 bucket names must be globally unique. Change this if your bucket name is already taken.
+  S3_BUCKET_NAME: my-threat-composer-tf-state-bucket 
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create S3 Bucket for Terraform State
+        run: |
+          echo "Creating S3 bucket: ${{ env.S3_BUCKET_NAME }}..."
+          aws s3api create-bucket \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --region ${{ env.AWS_REGION }} \
+            --create-bucket-configuration LocationConstraint=${{ env.AWS_REGION }}
+
+      - name: Enable S3 Bucket Versioning
+        run: |
+          echo "Enabling versioning on bucket to track state history..."
+          aws s3api put-bucket-versioning \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --versioning-configuration Status=Enabled
+
+      - name: Block All Public Access to State Bucket
+        run: |
+          echo "Blocking public access to keep state files secure..."
+          aws s3api put-public-access-block \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"

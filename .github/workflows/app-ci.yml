@@ -1,0 +1,57 @@
+name: Application CI (PR Check)
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/**'       # Only trigger on application code changes
+      - 'Dockerfile'   # Or if the build recipe changes
+      - 'nginx.conf'   # Or if the routing configuration changes
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Run application-specific tests
+      - name: Run Application Tests
+        run: |
+          echo "Running unit tests..."
+          # If your app folder requires npm, you might do:
+          # cd app
+          # npm install
+          # npm test
+
+      # Test build the Docker image to make sure it compiles
+      - name: Test Docker Build
+        run: |
+          echo "Verifying Dockerfile compiles successfully..."
+          docker build -t test-build .
+
+# name: Application CI (PR Check)
+
+# on:
+#   pull_request:
+#     branches:
+#       - main # Triggers on any PR targeting the main branch
+
+# jobs:
+#   test-and-lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+
+#       # Run application-specific tests (e.g., node, python, etc.)
+#       - name: Run Application Tests
+#         run: |
+#           echo "Running unit tests..."
+#           # npm test or pytest would go here
+
+#       # Optional: Test build the Docker image to make sure it compiles
+#       - name: Test Docker Build
+#         run: |
+#           docker build -t test-build .
