@@ -67,3 +67,11 @@ jobs:
       - name: Deploy to Amazon ECS
         run: |
           aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment
+
+      - name: Force ECS Deployment
+        run: |
+          aws ecs update-service \
+            --cluster ecs-threat-composer-project-cluster \
+            --service ecs-threat-composer-project-service \
+            --force-new-deployment \
+            --region eu-north-1
