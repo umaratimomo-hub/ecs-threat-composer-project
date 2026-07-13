@@ -3,9 +3,9 @@ output "alb_url" {
   value       = "http://${module.alb.alb_dns_name}"
 }
 
-output "ecr_repository_url" {
-  description = "The URL for your ECR repository (use this for 'docker push')"
-  value = data.aws_ecr_repository.app_repo.repository_url
+output "ecr_url" {
+  value = module.ecr.repository_url
+  description = "The URL of the ECR repository"
 }
 
 output "ecs_cluster_name" {

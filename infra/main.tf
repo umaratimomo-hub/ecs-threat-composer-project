@@ -11,11 +11,6 @@ module "alb" {
   public_subnet_ids = module.vpc.public_subnet_ids
 }
 
-# Read the ECR repository created by the bootstrap stack
-data "aws_ecr_repository" "app_repo" {
-  name = "threat-composer-app"
-}
-
 module "ecs" {
   source                 = "./modules/ecs"
   project_name           = var.project_name
@@ -24,5 +19,19 @@ module "ecs" {
   private_route_table_id = module.vpc.private_route_table_id
   alb_security_group_id  = module.alb.alb_security_group_id
   target_group_arn       = module.alb.target_group_arn
-  repository_url         = data.aws_ecr_repository.app_repo.repository_url
+  repository_url         = module.ecr.repository_url
 }
+
+module "ecr" {
+  source          = "./modules/ecr"
+  repository_name = "threat-composer-app"
+  region          = "eu-north-1"
+}
+# Now, anywhere you need the URL, just use: module.ecr.repository_url
+
+# module "ecs" {
+#   source = "./modules/ecs"
+  
+#   # Pass the value from the ecr module into the variable expected by the ecs module
+#   ecr_image_url = "${module.ecr.repository_url}" 
+# }
