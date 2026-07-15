@@ -35,21 +35,26 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # 1. Strip all hidden object versions out of the bucket
+      - # 1. Strip all hidden object versions out of the bucket
       - name: Empty Versioned S3 Bucket
         run: |
           echo "Fetching and deleting all object versions..."
           VERSIONS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}' --output=json)
           
-          # AWS CLI throws an error if we try to delete 'null', so we check first
-          if [[ "$VERSIONS" != "null" && "$VERSIONS" != '{"Objects": null}' ]]; then
+          # Only run the delete command if the JSON actually contains file data
+          if echo "$VERSIONS" | grep -q '"Key"'; then
             aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$VERSIONS"
+          else
+            echo "No object versions found. Skipping."
           fi
 
           echo "Fetching and deleting all delete markers..."
           MARKERS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' --output=json)
           
-          if [[ "$MARKERS" != "null" && "$MARKERS" != '{"Objects": null}' ]]; then
+          if echo "$MARKERS" | grep -q '"Key"'; then
             aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$MARKERS"
+          else
+            echo "No delete markers found. Skipping."
           fi
 
       # 2. Now that the bucket is truly empty, delete it
