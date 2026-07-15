@@ -3,10 +3,17 @@ name: Infrastructure Bootstrap
 on:
   workflow_dispatch: # Allows manual triggering only from the GitHub Actions UI
 
+# 1. Required permissions for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: eu-north-1
   # S3 bucket names must be globally unique. Change this if your bucket name is already taken.
   S3_BUCKET_NAME: my-threat-composer-tf-state-bucket 
+  # Your AWS IAM Role for GitHub Actions
+  AWS_ROLE_ARN: arn:aws:iam::526644151787:role/github-actions-terraform-role
 
 jobs:
   bootstrap:
@@ -15,11 +22,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
+      # 2. Authenticate securely via OIDC instead of access keys
+      - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Create S3 Bucket for Terraform State
