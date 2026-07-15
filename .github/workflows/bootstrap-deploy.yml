@@ -1,0 +1,61 @@
+name: Infrastructure Bootstrap Destroy
+
+on:
+  workflow_dispatch: 
+    inputs:
+      confirm:
+        description: 'Safety Catch: Type "DESTROY" to confirm'
+        required: true
+        default: ''
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-north-1
+  S3_BUCKET_NAME: threat-composer-tf-state-umara-13245
+  AWS_ROLE_ARN: arn:aws:iam::526644151787:role/github-actions-terraform-role
+
+jobs:
+  destroy-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      # GUARDRAIL: Fails the pipeline if you didn't type DESTROY
+      - name: Verify Confirmation
+        if: github.event.inputs.confirm != 'DESTROY'
+        run: |
+          echo "ERROR: Confirmation failed. You must type DESTROY to run this workflow."
+          exit 1
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 1. Strip all hidden object versions out of the bucket
+      - name: Empty Versioned S3 Bucket
+        run: |
+          echo "Fetching and deleting all object versions..."
+          VERSIONS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}' --output=json)
+          
+          # AWS CLI throws an error if we try to delete 'null', so we check first
+          if [[ "$VERSIONS" != "null" && "$VERSIONS" != '{"Objects": null}' ]]; then
+            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$VERSIONS"
+          fi
+
+          echo "Fetching and deleting all delete markers..."
+          MARKERS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' --output=json)
+          
+          if [[ "$MARKERS" != "null" && "$MARKERS" != '{"Objects": null}' ]]; then
+            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$MARKERS"
+          fi
+
+      # 2. Now that the bucket is truly empty, delete it
+      - name: Delete S3 Bucket
+        run: |
+          echo "Deleting bucket: ${{ env.S3_BUCKET_NAME }}..."
+          aws s3api delete-bucket \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --region ${{ env.AWS_REGION }}
