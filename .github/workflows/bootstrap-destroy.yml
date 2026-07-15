@@ -35,7 +35,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # 1. Strip all hidden object versions out of the bucket
-      - # 1. Strip all hidden object versions out of the bucket
       - name: Empty Versioned S3 Bucket
         run: |
           echo "Fetching and deleting all object versions..."
