@@ -11,7 +11,7 @@ permissions:
 env:
   AWS_REGION: eu-north-1
   # S3 bucket names must be globally unique. Change this if your bucket name is already taken.
-  S3_BUCKET_NAME: my-threat-composer-tf-state-bucket 
+  S3_BUCKET_NAME: threat-composer-tf-state-umara-13245 
   # Your AWS IAM Role for GitHub Actions
   AWS_ROLE_ARN: arn:aws:iam::526644151787:role/github-actions-terraform-role
 
