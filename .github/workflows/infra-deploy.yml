@@ -17,6 +17,8 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   PROJECT_NAME: ${{ vars.PROJECT_NAME }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+  AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  #F_LOG: DEBUG
 
 jobs:
   deploy:
@@ -39,8 +41,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-          aws-region: eu-north-1
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # 4. Initialize the S3 backend
       # Force init to fail if variables are missing instead of stalling
