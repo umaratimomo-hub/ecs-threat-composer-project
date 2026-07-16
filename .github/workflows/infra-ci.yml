@@ -12,6 +12,12 @@ permissions:
   contents: read    # Required for actions/checkout
   pull-requests: write # Required to post the terraform plan as a PR comment
 
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+  PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+
 jobs:
   validate-and-plan:
     name: Lint, Validate, and Plan
@@ -35,12 +41,15 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-          aws-region: eu-north-1
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # A single, clean initialization using your S3 backend
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_STATE_BUCKET }}" \
+            -backend-config="region=${{ env.AWS_REGION }}"
 
       - name: Validate Configuration
         run: terraform validate
@@ -48,7 +57,7 @@ jobs:
       # Run the plan and save the output
       - name: Speculative Plan
         id: plan
-        run: terraform plan -no-color -input=false -var="project_name=ecs-threat-composer-project"
+        run: terraform plan -no-color -input=false -var="project_name=${{ env.PROJECT_NAME }}"
 
       # Optional but highly recommended: Post the plan to the PR
       - name: Update Pull Request with Plan

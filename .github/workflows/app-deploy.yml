@@ -15,13 +15,11 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: eu-north-1
-  ECR_REPOSITORY: threat-composer-app
-  ECS_CLUSTER: threat-composer-cluster
-  ECS_SERVICE: threat-composer-service
-  # Using the same role you set up for Terraform. 
-  # Ensure this role has ECR push and ECS update permissions.
-  AWS_ROLE_ARN: arn:aws:iam::526644151787:role/github-actions-terraform-role
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_NAME }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER_NAME }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE_NAME }}
 
 jobs:
   # JOB 1: Check if the infrastructure exists and build the image

@@ -1,10 +1,10 @@
 provider "aws" {
-  region = var.aws_region
+  # Region inheritterd from github
 
   default_tags {
     tags = {
-      Environment = "Dev"
-      Project     = "ThreatComposer"
+      Environment = "Production"
+      Project     = var.project_name
       Repository  = "ecs-threat-composer-project"
       ManagedBy   = "Terraform"
     }

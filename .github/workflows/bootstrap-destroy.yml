@@ -13,9 +13,9 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: eu-north-1
-  S3_BUCKET_NAME: my-threat-composer-tf-state-bucket
-  AWS_ROLE_ARN: arn:aws:iam::526644151787:role/github-actions-terraform-role
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  S3_BUCKET_NAME: ${{ vars.TF_STATE_BUCKET }}
 
 jobs:
   destroy-bootstrap:
