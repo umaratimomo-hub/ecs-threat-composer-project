@@ -13,6 +13,11 @@ permissions:
   id-token: write   # Required to securely request the JWT from GitHub
   contents: read
 
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+  TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+
 jobs:
   deploy:
     name: Apply Infrastructure
@@ -38,13 +43,23 @@ jobs:
           aws-region: eu-north-1
 
       # 4. Initialize the S3 backend
+      # Force init to fail if variables are missing instead of stalling
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="bucket=${{ env.TF_STATE_BUCKET }}" \
+            -backend-config="region=${{ env.AWS_REGION }}"
 
-      # 5. Execute the deployment! 
-      # (-auto-approve is safe here because PRs are strictly reviewed via infra-ci.yml)
+      - name: Validate Configuration
+        run: terraform validate
+
+      # Force plan to fail if inputs are missing
+      - name: Terraform Plan
+        run: terraform plan -input=false -no-color -var="project_name=${{ env.PROJECT_NAME }}"
+
+      # Force apply to run headless
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}"
 
 # name: 'Terraform Infra Deploy'
 
