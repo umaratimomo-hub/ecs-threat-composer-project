@@ -13,6 +13,10 @@ permissions:
   id-token: write   # Required for requesting the JWT to authenticate with AWS
   contents: read    # Required for actions/checkout
 
+# env:
+#   AWS_REGION: ${{ vars.AWS_REGION }}
+#   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+
 jobs:
   destroy:
     name: Terraform Destroy
@@ -38,8 +42,8 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-          aws-region: eu-north-1
+          role-to-assume: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

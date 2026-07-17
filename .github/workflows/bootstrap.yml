@@ -9,7 +9,6 @@ permissions:
   contents: read
 
 env:
-  env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
   S3_BUCKET_NAME: ${{ vars.TF_STATE_BUCKET }}
@@ -31,10 +30,9 @@ jobs:
       - name: Create S3 Bucket for Terraform State
         run: |
           echo "Creating S3 bucket: ${{ env.S3_BUCKET_NAME }}..."
-          aws s3api create-bucket \
-            --bucket ${{ env.S3_BUCKET_NAME }} \
-            --region ${{ env.AWS_REGION }} \
-            --create-bucket-configuration LocationConstraint=${{ env.AWS_REGION }}
+          # Using 's3 mb' (make bucket) automatically handles the LocationConstraint 
+          # quirk for all regions, including us-east-1.
+          aws s3 mb s3://${{ env.S3_BUCKET_NAME }} --region ${{ env.AWS_REGION }}
 
       - name: Enable S3 Bucket Versioning
         run: |

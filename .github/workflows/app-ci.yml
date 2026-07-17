@@ -16,42 +16,37 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Run application-specific tests
+      # --- GATE 1: DOCKERFILE LINTING ---
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          # Fails the pipeline only if an 'error' level rule is broken 
+          # (e.g., running as root, missing tags)
+          failure-threshold: error 
+
+      # --- APPLICATION TESTS ---
       - name: Run Application Tests
         run: |
           echo "Running unit tests..."
-          # If your app folder requires npm, you might do:
           # cd app
           # npm install
           # npm test
 
-      # Test build the Docker image to make sure it compiles
-      - name: Test Docker Build
+      # --- BUILD THE IMAGE ---
+      - name: Build Docker Image
         run: |
-          echo "Verifying Dockerfile compiles successfully..."
-          docker build -t test-build .
+          echo "Compiling the Docker image locally..."
+          docker build -t test-build:latest .
 
-# name: Application CI (PR Check)
-
-# on:
-#   pull_request:
-#     branches:
-#       - main # Triggers on any PR targeting the main branch
-
-# jobs:
-#   test-and-lint:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       # Run application-specific tests (e.g., node, python, etc.)
-#       - name: Run Application Tests
-#         run: |
-#           echo "Running unit tests..."
-#           # npm test or pytest would go here
-
-#       # Optional: Test build the Docker image to make sure it compiles
-#       - name: Test Docker Build
-#         run: |
-#           docker build -t test-build .
+      # --- GATE 2: IMAGE VULNERABILITY SCAN ---
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'test-build:latest'
+          format: 'table'
+          exit-code: '1'
+          # Only fail the pipeline if there is an actual patch available
+          ignore-unfixed: true 
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

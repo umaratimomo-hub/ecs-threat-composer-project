@@ -1,0 +1,21 @@
+name: Workflow Linting (CI)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**' # Only runs when you edit pipeline files
+
+jobs:
+  lint-workflows:
+    name: Actionlint and Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Actionlint
+        uses: raven-actions/actionlint@v2
+        with:
+          # This automatically checks every .yml file in your workflows folder,
+          # and it runs ShellCheck on your bash steps automatically!
+          fail-on-error: true

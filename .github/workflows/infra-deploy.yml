@@ -18,7 +18,6 @@ env:
   PROJECT_NAME: ${{ vars.PROJECT_NAME }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
-  #F_LOG: DEBUG
 
 jobs:
   deploy:
@@ -34,6 +33,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # --- TFLINT ---
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint -f compact
+
+      # --- TRIVY ---
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          scan-type: 'config'
+          scan-ref: 'infra'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
+      # --- INFRA DEPLOYMENT ---
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -45,7 +66,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # 4. Initialize the S3 backend
-      # Force init to fail if variables are missing instead of stalling
       - name: Terraform Init
         run: |
           terraform init -input=false \
@@ -62,60 +82,4 @@ jobs:
       # Force apply to run headless
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}"
-
-# name: 'Terraform Infra Deploy'
-
-# on:
-#   workflow_dispatch: # Manual trigger
-
-# permissions:
-#   id-token: write   # Required for OIDC
-#   contents: read
-
-# jobs:
-#   validate-and-plan:
-#     name: 'Validate and Plan'
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: infra
-#     steps:
-#       - uses: actions/checkout@v4
-#       - uses: hashicorp/setup-terraform@v3
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-#           aws-region: eu-north-1
-      
-#       - name: Terraform Init
-#         run: terraform init
-      
-#       # Include your TFLint and Trivy steps here as discussed before...
-      
-#       - name: Terraform Plan
-#         run: terraform plan -input=false
-
-#   deploy:
-#     name: 'Deploy Infrastructure'
-#     needs: validate-and-plan
-#     runs-on: ubuntu-latest
-#     if: github.ref == 'refs/heads/main'
-#     defaults:
-#       run:
-#         working-directory: infra
-#     steps:
-#       - uses: actions/checkout@v4
-#       - uses: hashicorp/setup-terraform@v3
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-#           aws-region: eu-north-1
-
-#       - name: Terraform Init
-#         run: terraform init
-
-#       - name: Terraform Apply
-#         run: terraform apply -auto-approve -input=false
 

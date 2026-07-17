@@ -30,6 +30,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      
+      
+       # --- TFLINT ---
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint -f compact
+
+      # --- TRIVY ---
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          scan-type: 'config'
+          scan-ref: 'infra'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -86,58 +108,3 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
-
-# name: Terraform CI (Verify & Speculative Plan)
-
-# # 1. Trigger on Pull Requests to main when infrastructure files change
-# on:
-#   pull_request:
-#     branches:
-#       - main
-#     paths:
-#       - 'infra/**'
-
-# permissions:
-#   id-token: write   # Required for requesting the JWT to authenticate with AWS
-#   contents: read    # Required for actions/checkout
-
-# jobs:
-#   validate-and-plan:
-#     name: Lint, Validate, and Plan
-#     runs-on: ubuntu-latest
-    
-#     defaults:
-#       run:
-#         working-directory: infra
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       # 2. This checks style without needing AWS access
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v3
-
-#       - name: Check Formatting
-#         run: terraform fmt -check -recursive
-
-#       - name: Initialize Code Validation
-#         run: terraform init -backend=false
-
-#       - name: Validate Configuration
-#         run: terraform validate
-
-#       # 3. Connect to AWS to see what would change
-#       - name: Configure AWS Credentials via OIDC
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-#           aws-region: eu-north-1
-
-#       # Re-initialize with backend enabled to fetch state for the plan
-#       - name: Terraform Init (With Backend)
-#         run: terraform init -force-copy
-
-#       - name: Speculative Plan
-#         id: plan
-#         run: terraform plan -no-color -input=false -var="project_name=ecs-threat-composer-project"
