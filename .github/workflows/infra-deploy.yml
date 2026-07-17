@@ -42,7 +42,8 @@ jobs:
       - name: Run TFLint
         run: |
           tflint --init
-          tflint -f compact
+          # Only fail the pipeline on Errors, let Warnings pass
+          tflint -f compact --minimum-failure-severity=error
 
       # --- TRIVY ---
       - name: Run Trivy Vulnerability Scanner

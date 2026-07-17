@@ -29,10 +29,15 @@ jobs:
 
       - name: Create S3 Bucket for Terraform State
         run: |
-          echo "Creating S3 bucket: ${{ env.S3_BUCKET_NAME }}..."
-          # Using 's3 mb' (make bucket) automatically handles the LocationConstraint 
-          # quirk for all regions, including us-east-1.
-          aws s3 mb s3://${{ env.S3_BUCKET_NAME }} --region ${{ env.AWS_REGION }}
+          echo "Checking if state bucket exists..."
+          # 1. Use head-bucket to silently ping the S3 API. 
+          # 2. The 2>/dev/null hides the expected 404 error if it doesn't exist yet.
+          if aws s3api head-bucket --bucket ${{ env.S3_BUCKET_NAME }} 2>/dev/null; then
+            echo "Bucket '${{ env.S3_BUCKET_NAME }}' already exists. Skipping creation."
+          else
+            echo "Creating S3 bucket: ${{ env.S3_BUCKET_NAME }}..."
+            aws s3 mb s3://${{ env.S3_BUCKET_NAME }} --region ${{ env.AWS_REGION }}
+          fi
 
       - name: Enable S3 Bucket Versioning
         run: |
