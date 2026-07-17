@@ -13,10 +13,12 @@ permissions:
   id-token: write   # Required for requesting the JWT to authenticate with AWS
   contents: read    # Required for actions/checkout
 
-# env:
-#   AWS_REGION: ${{ vars.AWS_REGION }}
-#   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
-
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+  TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+  AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  
 jobs:
   destroy:
     name: Terraform Destroy
@@ -48,11 +50,16 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # Initialize the S3 backend using the environment variables
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="bucket=${{ env.TF_STATE_BUCKET }}" \
+            -backend-config="region=${{ env.AWS_REGION }}"
 
       - name: Terraform Plan (Destroy)
         run: terraform plan -destroy -out=destroy.tfplan
 
+      # Force destroy to run headless without asking for confirmation
       - name: Terraform Destroy
-        run: terraform apply -auto-approve destroy.tfplan
+        run: terraform destroy -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}"
