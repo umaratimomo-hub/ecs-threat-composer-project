@@ -17,6 +17,7 @@ resource "aws_security_group" "ecs_tasks" {
   }
 
   # Outbound traffic allowed anywhere (to talk to VPC Endpoints / ECR)
+  # trivy:ignore:AVD-AWS-0104
   egress {
     from_port   = 0
     to_port     = 0

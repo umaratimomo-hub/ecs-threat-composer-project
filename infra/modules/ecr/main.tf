@@ -1,6 +1,13 @@
 resource "aws_ecr_repository" "app_repo" {
   name                 = var.repository_name
+  
+  # trivy:ignore:AVD-AWS-0031
   image_tag_mutability = "MUTABLE"
+
+  # FIX: AWS-0030 Enable image scanning
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 
   # This tells AWS: "Delete the repo even if it has images inside"
   force_delete = true

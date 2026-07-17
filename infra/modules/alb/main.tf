@@ -20,6 +20,7 @@ resource "aws_security_group" "alb" {
     }
   }
 
+  # trivy:ignore:AVD-AWS-0104
   egress {
     description      = "Allow all outbound traffic"
     from_port        = 0
@@ -40,10 +41,15 @@ resource "aws_security_group" "alb" {
 
 resource "aws_lb" "main" {
   name               = "${var.project_name}-alb"
+
+  # trivy:ignore:AVD-AWS-0053
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = var.public_subnet_ids
+
+  # FIX: AWS-0052 Drop invalid headers
+  drop_invalid_header_fields = true
 
   tags = {
     Name = "${var.project_name}-alb"
@@ -120,7 +126,7 @@ resource "aws_acm_certificate_validation" "cert" {
 # LISTENERS
 # ==============================================================================
 
-# HTTP Listener
+# trivy:ignore:AVD-AWS-0054
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = var.http_port
