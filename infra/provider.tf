@@ -1,5 +1,5 @@
 provider "aws" {
-  # Region inheritterd from github
+  region = var.aws_region
 
   default_tags {
     tags = {
