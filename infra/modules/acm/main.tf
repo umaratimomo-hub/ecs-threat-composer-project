@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+  }
+}
+
 # 1. Request the Certificate
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name

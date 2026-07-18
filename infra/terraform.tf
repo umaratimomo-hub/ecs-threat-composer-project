@@ -14,7 +14,8 @@ terraform {
   }
 
   backend "s3" {
-    # Bucket and region inheritted from github
+    bucket       = "threat-composer-tf-state-umara-13245"
+    region       = "eu-north-1"
     key          = "infra/terraform.tfstate"
     encrypt      = true
     use_lockfile = true
