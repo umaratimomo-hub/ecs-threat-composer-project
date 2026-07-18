@@ -81,7 +81,7 @@ jobs:
       # Run the plan and save the output
       - name: Speculative Plan
         id: plan
-        run: terraform plan -no-color -input=false -var="project_name=${{ env.PROJECT_NAME }}" #terraform apply -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" -var="cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
+        run: terraform plan -no-color -input=false -var="project_name=${{ env.PROJECT_NAME }}" -var="domain_name=anaqahwear.com"
 
       # Optional but highly recommended: Post the plan to the PR
       - name: Update Pull Request with Plan
