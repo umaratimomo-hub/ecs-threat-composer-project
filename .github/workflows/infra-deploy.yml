@@ -80,9 +80,9 @@ jobs:
 
       # Force plan to fail if inputs are missing
       - name: Terraform Plan
-        run: terraform plan -input=false -no-color -var="project_name=${{ env.PROJECT_NAME }}"
+        run: terraform plan -input=false -no-color -var="project_name=${{ env.PROJECT_NAME }}" -var="domain_name=anaqahwear.com"
 
       # Force apply to run headless
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}"
+        run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}" -var="domain_name=anaqahwear.com"
 
