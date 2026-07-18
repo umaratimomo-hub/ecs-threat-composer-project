@@ -17,7 +17,8 @@ env:
   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
   PROJECT_NAME: ${{ vars.PROJECT_NAME }}
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
 jobs:
   validate-and-plan:
@@ -80,7 +81,7 @@ jobs:
       # Run the plan and save the output
       - name: Speculative Plan
         id: plan
-        run: terraform plan -no-color -input=false -var="project_name=${{ env.PROJECT_NAME }}"
+        run: terraform plan -no-color -input=false -var="project_name=${{ env.PROJECT_NAME }}" #terraform apply -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" -var="cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
 
       # Optional but highly recommended: Post the plan to the PR
       - name: Update Pull Request with Plan
