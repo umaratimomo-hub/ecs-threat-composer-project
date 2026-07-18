@@ -20,6 +20,8 @@ env:
   ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_NAME }}
   ECS_CLUSTER: ${{ vars.ECS_CLUSTER_NAME }}
   ECS_SERVICE: ${{ vars.ECS_SERVICE_NAME }}
+  TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
 jobs:
   # JOB 1: Check if the infrastructure exists and build the image
@@ -103,84 +105,4 @@ jobs:
             --service ${{ env.ECS_SERVICE }} \
             --force-new-deployment \
             --region ${{ env.AWS_REGION }}
-
-
-# name: App Deploy
-
-# on:
-#   workflow_run:
-#     workflows: ["Terraform Infra Deploy"]
-#     types:
-#       - completed
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'app/**' # Only run if app code changes
-
-# # Required for AWS OIDC authentication
-# permissions:
-#   id-token: write
-#   contents: read
-
-# env:
-#   AWS_REGION: eu-north-1
-#   ECR_REPOSITORY: threat-composer-app
-#   ECS_CLUSTER: threat-composer-cluster      # Replace with your exact ECS cluster name later
-#   ECS_SERVICE: threat-composer-service      # Replace with your exact ECS service name later
-
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       # 1. Lint the Dockerfile first
-#       - name: Lint Dockerfile
-#         uses: hadolint/hadolint-action@v3.1.0
-#         with:
-#           dockerfile: Dockerfile
-
-#       # 2. Authenticate with AWS via OIDC
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::526644151787:role/github-actions-terraform-role
-#           aws-region: ${{ env.AWS_REGION }}
-
-#       # Set up Node.js (Adjust version if necessary)
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: '20'
-
-#       # 3. Log in to your Bootstrap ECR Registry
-#       - name: Log in to Amazon ECR
-#         id: login-ecr
-#         uses: aws-actions/amazon-ecr-login@v2
-
-#       # 4. Build, Tag, and Push the Image (using both git SHA and 'latest')
-#       - name: Build, tag, and push image to Amazon ECR
-#         env:
-#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#           IMAGE_TAG: ${{ github.sha }}
-#         run: |
-#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-#       # 5. Force ECS Fargate to pull the fresh image
-#       - name: Deploy to Amazon ECS
-#         run: |
-#           aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment
-
-#       - name: Force ECS Deployment
-#         run: |
-#           aws ecs update-service \
-#             --cluster ${{ env.ECS_CLUSTER }} \
-#             --service ${{ env.ECS_SERVICE }} \
-#             --force-new-deployment \
-#             --region eu-north-1
-
 
