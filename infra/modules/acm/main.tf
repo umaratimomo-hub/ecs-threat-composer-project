@@ -20,13 +20,13 @@ resource "cloudflare_record" "cert_validation" {
   }
 
   zone_id = var.cloudflare_zone_id
-  
+
   # FIX 1: Strip the trailing dot AWS provides
-  name    = trimsuffix(each.value.name, ".")
-  
+  name = trimsuffix(each.value.name, ".")
+
   # FIX 2: Use 'content' for Cloudflare provider v4 (if on v3, change this back to 'value')
   content = each.value.record
-  
+
   type    = each.value.type
   proxied = false # Must be false for AWS to read the validation record
   ttl     = 60
