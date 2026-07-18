@@ -65,7 +65,7 @@ jobs:
       - name: Build image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        run: docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:latest" .
 
       # 3. VULNERABILITY SCANNING: Check the actual image artifact
       - name: Run Trivy Vulnerability Scanner
@@ -81,7 +81,7 @@ jobs:
       - name: Push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        run: docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
 
   # JOB 2: The Production Deployment (Requires DevOps sign-off)
   deploy-to-prod:
