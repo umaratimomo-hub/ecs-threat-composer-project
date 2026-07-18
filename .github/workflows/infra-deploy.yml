@@ -84,6 +84,7 @@ jobs:
 
       # Force apply to run headless
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}" -var="domain_name=anaqahwear.com" -var="cloudflare_api_token=${{ env.TF_VAR_cloudflare_api_token }}" -var="cloudflare_zone_id=${{ env.TF_VAR_cloudflare_zone_id }}"
-  
-
+        run: terraform apply -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}" -var="domain_name=anaqahwear.com"
+        env:
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
