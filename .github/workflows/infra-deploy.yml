@@ -18,6 +18,7 @@ env:
   PROJECT_NAME: ${{ vars.PROJECT_NAME }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
 jobs:
   deploy:
