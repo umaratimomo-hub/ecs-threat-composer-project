@@ -13,7 +13,6 @@ variable "aws_region" {
 variable "domain_name" {
   description = "Domain name for SSL"
   type        = string
-  default     = ""
 }
 
 variable "cloudflare_api_token" {
