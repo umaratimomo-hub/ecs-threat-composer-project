@@ -18,7 +18,7 @@ env:
   PROJECT_NAME: ${{ vars.PROJECT_NAME }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
   AWS_ROLE_ARN: ${{ vars.AWS_OIDC_ROLE_ARN }}
-  
+
 jobs:
   destroy:
     name: Terraform Destroy
@@ -57,8 +57,14 @@ jobs:
             -backend-config="bucket=${{ env.TF_STATE_BUCKET }}" \
             -backend-config="region=${{ env.AWS_REGION }}"
 
-      - name: Terraform Plan (Destroy)
-        run: terraform plan -destroy -out=destroy.tfplan
+      - name: Terraform Destroy
+        run: |
+          terraform destroy -auto-approve -input=false \
+            -var="project_name=${{ env.PROJECT_NAME }}" \
+            -var="domain_name=anaqahwear.com"
+        env:
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
       # Force destroy to run headless without asking for confirmation
       - name: Terraform Destroy
