@@ -40,7 +40,7 @@ resource "aws_security_group" "alb" {
 # ==============================================================================
 
 resource "aws_lb" "main" {
-  name               = "${var.project_name}-alb"
+  name = "${var.project_name}-alb"
 
   # trivy:ignore:AVD-AWS-0053
   internal           = false

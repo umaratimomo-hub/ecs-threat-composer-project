@@ -27,11 +27,10 @@ module "ecr" {
   repository_name = "threat-composer-app"
   region          = "eu-north-1"
 }
-# Now, anywhere you need the URL, just use: module.ecr.repository_url
 
-# module "ecs" {
-#   source = "./modules/ecs"
-
-#   # Pass the value from the ecr module into the variable expected by the ecs module
-#   ecr_image_url = "${module.ecr.repository_url}" 
-# }
+module "acm" {
+  source               = "./modules/acm"
+  domain_name          = var.domain_name
+  cloudflare_zone_id   = var.cloudflare_zone_id
+  cloudflare_api_token = var.cloudflare_api_token
+}

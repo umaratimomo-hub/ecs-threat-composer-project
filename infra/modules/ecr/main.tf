@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "app_repo" {
-  name                 = var.repository_name
-  
+  name = var.repository_name
+
   # trivy:ignore:AVD-AWS-0031
   image_tag_mutability = "MUTABLE"
 

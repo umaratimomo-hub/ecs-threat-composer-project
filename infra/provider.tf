@@ -1,5 +1,5 @@
 provider "aws" {
-  # Region inheritterd from github
+  region = var.aws_region
 
   default_tags {
     tags = {
@@ -9,4 +9,8 @@ provider "aws" {
       ManagedBy   = "Terraform"
     }
   }
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

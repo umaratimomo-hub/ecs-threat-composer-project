@@ -7,10 +7,15 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 
   backend "s3" {
-    # Bucket and region inheritted from github
+    bucket       = "threat-composer-tf-state-umara-13245"
+    region       = "eu-north-1"
     key          = "infra/terraform.tfstate"
     encrypt      = true
     use_lockfile = true
