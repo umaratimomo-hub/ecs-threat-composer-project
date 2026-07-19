@@ -141,5 +141,5 @@ resource "cloudflare_record" "tm_app" {
   name    = "tm.umaratimomo"
   content = aws_lb.main.dns_name
   type    = "CNAME"
-  proxied = false                # Allows ACM cert to handle the HTTPS
+  proxied = false # Allows ACM cert to handle the HTTPS
 }

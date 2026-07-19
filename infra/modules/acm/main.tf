@@ -13,8 +13,8 @@ resource "aws_acm_certificate" "cert" {
   validation_method = "DNS"
 
   subject_alternative_names = [
-    "*.${var.domain_name}",                  # Covers 1st level subdomains (e.g., tm.anaqahwear.com)
-    "*.umaratimomo.${var.domain_name}"       # Covers 2nd level subdomains (e.g., tm.umaratimomo.anaqahwear.com)
+    "*.${var.domain_name}",            # Covers 1st level subdomains (e.g., tm.anaqahwear.com)
+    "*.umaratimomo.${var.domain_name}" # Covers 2nd level subdomains (e.g., tm.umaratimomo.anaqahwear.com)
   ]
 
   lifecycle {
