@@ -19,12 +19,6 @@ variable "domain_name" {
   default     = ""
 }
 
-variable "route53_zone_id" {
-  description = "The Route 53 Hosted Zone ID for domain validation"
-  type        = string
-  default     = ""
-}
-
 variable "app_port" {
   type        = number
   description = "The port the application backend listens on"
@@ -53,4 +47,10 @@ variable "ssl_policy" {
   type        = string
   description = "The security policy for the ALB HTTPS listener"
   default     = "ELBSecurityPolicy-2020-14" # Updated to a more modern, secure default
+}
+
+variable "certificate_arn" {
+  description = "The ARN of the validated ACM certificate"
+  type        = string
+  default     = ""
 }

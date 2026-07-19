@@ -82,47 +82,6 @@ resource "aws_lb_target_group" "app" {
 }
 
 # ==============================================================================
-# ACM CERTIFICATE & ROUTE 53 VALIDATION
-# ==============================================================================
-
-resource "aws_acm_certificate" "cert" {
-  count             = var.domain_name != "" ? 1 : 0
-  domain_name       = var.domain_name
-  validation_method = "DNS"
-
-  tags = {
-    Name = "${var.project_name}-cert"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "validation" {
-  for_each = {
-    for dvo in(var.domain_name != "" ? aws_acm_certificate.cert[0].domain_validation_options : []) : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = var.route53_zone_id
-}
-
-resource "aws_acm_certificate_validation" "cert" {
-  count                   = var.domain_name != "" ? 1 : 0
-  certificate_arn         = aws_acm_certificate.cert[0].arn
-  validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
-}
-
-# ==============================================================================
 # LISTENERS
 # ==============================================================================
 
@@ -160,10 +119,18 @@ resource "aws_lb_listener" "https" {
   port              = var.https_port
   protocol          = "HTTPS"
   ssl_policy        = var.ssl_policy
-  certificate_arn   = aws_acm_certificate_validation.cert[0].certificate_arn
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app.arn
   }
+}
+
+resource "cloudflare_record" "tm_app" {
+  zone_id = var.cloudflare_zone_id
+  name    = "tm.umaratimomo"
+  content = aws_lb.main.dns_name
+  type    = "CNAME"
+  proxied = false                # Allows ACM cert to handle the HTTPS
 }
