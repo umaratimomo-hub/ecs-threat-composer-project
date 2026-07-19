@@ -23,21 +23,23 @@ resource "aws_acm_certificate" "cert" {
 }
 
 # 2. Create the DNS validation records in Cloudflare
-# We map by 'dvo.resource_record_name' to prevent duplicate record conflicts.
+# We switch the key to dvo.domain_name (known at plan time) 
+# and filter out the base wildcard to prevent duplicates.
 resource "cloudflare_record" "cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.resource_record_name => {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
       name  = dvo.resource_record_name
       value = dvo.resource_record_value
       type  = dvo.resource_record_type
     }
+    if dvo.domain_name != "*.${var.domain_name}" # 👈 Skips the duplicate base wildcard record
   }
 
   zone_id = var.cloudflare_zone_id
   name    = each.value.name
   value   = each.value.value
   type    = each.value.type
-  proxied = false # Must be false (DNS-Only) for ACM validation to succeed
+  proxied = false
   ttl     = 60
 }
 
