@@ -96,35 +96,35 @@ resource "aws_lb_target_group" "app" {
 
 # trivy:ignore:AVD-AWS-0054
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.main.arn
-  port              = var.http_port
-  protocol          = "HTTP"
+    load_balancer_arn = aws_lb.main.arn
+    port              = var.http_port
+    protocol          = "HTTP"
 
-  # Only define redirect if we have a domain
-    default_action {
-      type = var.domain_name != "" ? "redirect" : "forward"
+    # Only define redirect if we have a domain
+      default_action {
+        type = var.domain_name != "" ? "redirect" : "forward"
 
-      dynamic "default_action" {
-        for_each = var.domain_name != "" ? [1] : []
-        content {
-          type = "redirect"
-          redirect {
-            port        = tostring(var.https_port)
-            protocol    = "HTTPS"
-            status_code = "HTTP_301"
+        dynamic "default_action" {
+          for_each = var.domain_name != "" ? [1] : []
+          content {
+            type = "redirect"
+            redirect {
+              port        = tostring(var.https_port)
+              protocol    = "HTTPS"
+              status_code = "HTTP_301"
+            }
           }
         }
-      }
 
-  dynamic "default_action" {
-    for_each = var.domain_name == "" ? [1] : []
-    content {
-      type             = "forward"
-      target_group_arn = aws_lb_target_group.app.arn
+    dynamic "default_action" {
+      for_each = var.domain_name == "" ? [1] : []
+      content {
+        type             = "forward"
+        target_group_arn = aws_lb_target_group.app.arn
+      }
     }
   }
 }
-
 # HTTPS Listener
 resource "aws_lb_listener" "https" {
   count             = var.domain_name != "" ? 1 : 0
