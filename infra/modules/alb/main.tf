@@ -119,7 +119,6 @@ resource "aws_lb_listener" "http" {
     dynamic "forward" {
       for_each = var.domain_name == "" ? [1] : []
       content {
-        type             = "forward"
         target_group_arn = aws_lb_target_group.app.arn
       }
     }
