@@ -11,6 +11,7 @@ module "alb" {
   public_subnet_ids  = module.vpc.public_subnet_ids
   certificate_arn    = module.acm.certificate_arn
   cloudflare_zone_id = var.cloudflare_zone_id
+  domain_name        = var.domain_name
 }
 
 module "ecs" {

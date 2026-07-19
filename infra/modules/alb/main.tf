@@ -100,17 +100,21 @@ resource "aws_lb_listener" "http" {
   port              = var.http_port
   protocol          = "HTTP"
 
-  dynamic "default_action" {
-    for_each = var.domain_name != "" ? [1] : []
-    content {
-      type = "redirect"
-      redirect {
-        port        = tostring(var.https_port)
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
+  # Only define redirect if we have a domain
+    default_action {
+      type = var.domain_name != "" ? "redirect" : "forward"
+
+      dynamic "default_action" {
+        for_each = var.domain_name != "" ? [1] : []
+        content {
+          type = "redirect"
+          redirect {
+            port        = tostring(var.https_port)
+            protocol    = "HTTPS"
+            status_code = "HTTP_301"
+          }
+        }
       }
-    }
-  }
 
   dynamic "default_action" {
     for_each = var.domain_name == "" ? [1] : []
