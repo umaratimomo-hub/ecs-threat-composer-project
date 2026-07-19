@@ -139,49 +139,6 @@ resource "aws_lb_listener" "https" {
     target_group_arn = aws_lb_target_group.app.arn
   }
 }
-# resource "aws_lb_listener" "http" {
-#     load_balancer_arn = aws_lb.main.arn
-#     port              = var.http_port
-#     protocol          = "HTTP"
-
-#     # Only define redirect if we have a domain
-#       default_action {
-#         type = var.domain_name != "" ? "redirect" : "forward"
-
-#         dynamic "default_action" {
-#           for_each = var.domain_name != "" ? [1] : []
-#           content {
-#             type = "redirect"
-#             redirect {
-#               port        = tostring(var.https_port)
-#               protocol    = "HTTPS"
-#               status_code = "HTTP_301"
-#             }
-#           }
-#         }
-
-#     dynamic "forward" {
-#       for_each = var.domain_name == "" ? [1] : []
-#       content {
-#         target_group_arn = aws_lb_target_group.app.arn
-#       }
-#     }
-#   }
-# }
-# # HTTPS Listener
-# resource "aws_lb_listener" "https" {
-#   count             = var.domain_name != "" ? 1 : 0
-#   load_balancer_arn = aws_lb.main.arn
-#   port              = var.https_port
-#   protocol          = "HTTPS"
-#   ssl_policy        = var.ssl_policy
-#   certificate_arn   = var.certificate_arn
-
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.app.arn
-#   }
-# }
 
 resource "cloudflare_record" "tm_app" {
   zone_id = var.cloudflare_zone_id
