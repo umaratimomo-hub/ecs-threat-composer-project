@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
+  }
+}
+
+
 # ==============================================================================
 # SECURITY GROUPS (Firewalls)
 # ==============================================================================
