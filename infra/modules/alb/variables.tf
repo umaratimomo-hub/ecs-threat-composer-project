@@ -54,3 +54,8 @@ variable "certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "cloudflare_zone_id" {
+  description = "The Cloudflare Zone ID for creating the subdomain CNAME record"
+  type        = string
+}
