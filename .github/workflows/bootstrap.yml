@@ -1,4 +1,4 @@
-name: Infrastructure Bootstrap
+name: 2.Infrastructure Bootstrap(S3)
 
 on:
   workflow_dispatch: # Allows manual triggering only from the GitHub Actions UI

@@ -1,13 +1,16 @@
-name: Application CI (PR Check)
+name: 5.Application CI (PR Check)
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'app/**'       # Only trigger on application code changes
-      - 'Dockerfile'   # Or if the build recipe changes
-      - 'nginx.conf'   # Or if the routing configuration changes
+  workflow_dispatch:
+
+# on:
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'app/**'       # Only trigger on application code changes
+  #     - 'Dockerfile'   # Or if the build recipe changes
+  #     - 'nginx.conf'   # Or if the routing configuration changes
 
 jobs:
   test-and-lint:

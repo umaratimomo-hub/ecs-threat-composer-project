@@ -1,12 +1,12 @@
-name: Infrastructure Deploy
+name: 4.Infrastructure Deploy
 
 # 1. Triggers on merges to main (only for infra changes) OR manual clicks
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/**'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'infra/**'
   workflow_dispatch: 
 
 permissions:

@@ -1,13 +1,16 @@
-name: Application Deploy
+name: 6.Application Deploy
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'app/**'       # Monitors all application source files
-      - 'Dockerfile'   # Monitors Docker build recipe changes
-      - 'nginx.conf'   # Monitors Nginx routing configuration changes
+  workflow_dispatch:
+
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - 'app/**'       # Monitors all application source files
+#       - 'Dockerfile'   # Monitors Docker build recipe changes
+#       - 'nginx.conf'   # Monitors Nginx routing configuration changes
 
 # Required for OIDC authentication with AWS
 permissions:

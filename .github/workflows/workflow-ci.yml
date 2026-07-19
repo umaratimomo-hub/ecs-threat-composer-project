@@ -1,4 +1,4 @@
-name: Workflow Linting (CI)
+name: 1.Workflow Linting (CI)
 
 on:
   pull_request:

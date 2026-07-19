@@ -1,11 +1,13 @@
-name: Terraform CI (Verify & Speculative Plan)
+name: 3.Terraform CI (Verify & Speculative Plan)
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'infra/**'
+  workflow_dispatch:
+# on:
+#   pull_request:
+#     branches:
+#       - main
+    # paths:
+    #   - 'infra/**'
 
 permissions:
   id-token: write   # Required for requesting the JWT to authenticate with AWS via OIDC
