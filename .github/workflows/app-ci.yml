@@ -41,7 +41,7 @@ jobs:
 
       # --- GATE 2: IMAGE VULNERABILITY SCAN ---
       - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: 'test-build:latest'
           format: 'table'
