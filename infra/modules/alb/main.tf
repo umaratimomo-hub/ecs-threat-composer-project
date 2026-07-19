@@ -116,7 +116,7 @@ resource "aws_lb_listener" "http" {
           }
         }
 
-    dynamic "default_action" {
+    dynamic "forward" {
       for_each = var.domain_name == "" ? [1] : []
       content {
         type             = "forward"
