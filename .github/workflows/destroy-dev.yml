@@ -68,7 +68,6 @@ jobs:
 
       # Force destroy to run headless without asking for confirmation
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}" \
-                -var="project_name=threat-composer" -var="domain_name=anaqahwear.com" \
+        run: terraform destroy -auto-approve -input=false -var="project_name=${{ env.PROJECT_NAME }}" -var="project_name=threat-composer" -var="domain_name=anaqahwear.com" \
                 -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
                 -var="cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
