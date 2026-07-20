@@ -1,9 +1,22 @@
-name: 2.Infrastructure Bootstrap(S3)
+name: 1. Infrastructure Bootstrap (S3 State)
 
 on:
-  workflow_dispatch: # Allows manual triggering only from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform on the State Bucket'
+        required: true
+        type: choice
+        options:
+          - create
+          - destroy
+      confirm:
+        description: 'Safety Catch (ONLY if destroying): Type "DESTROY" to confirm'
+        required: false
+        type: string
+        default: ''
 
-# 1. Required permissions for OIDC authentication
+# Required permissions for OIDC authentication
 permissions:
   id-token: write
   contents: read
@@ -14,24 +27,33 @@ env:
   S3_BUCKET_NAME: ${{ vars.TF_STATE_BUCKET }}
 
 jobs:
-  bootstrap:
+  manage-state-bucket:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Authenticate securely via OIDC instead of access keys
+      # GUARDRAIL: Fails the pipeline if you chose 'destroy' but didn't type DESTROY
+      - name: Verify Confirmation (Destroy Only)
+        if: github.event.inputs.action == 'destroy' && github.event.inputs.confirm != 'DESTROY'
+        run: |
+          echo "ERROR: Confirmation failed. You must type DESTROY to delete the bucket."
+          exit 1
+
+      # Authenticate securely via OIDC
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # ==========================================
+      # CREATE LOGIC
+      # ==========================================
       - name: Create S3 Bucket for Terraform State
+        if: github.event.inputs.action == 'create'
         run: |
           echo "Checking if state bucket exists..."
-          # 1. Use head-bucket to silently ping the S3 API. 
-          # 2. The 2>/dev/null hides the expected 404 error if it doesn't exist yet.
           if aws s3api head-bucket --bucket ${{ env.S3_BUCKET_NAME }} 2>/dev/null; then
             echo "Bucket '${{ env.S3_BUCKET_NAME }}' already exists. Skipping creation."
           else
@@ -40,6 +62,7 @@ jobs:
           fi
 
       - name: Enable S3 Bucket Versioning
+        if: github.event.inputs.action == 'create'
         run: |
           echo "Enabling versioning on bucket to track state history..."
           aws s3api put-bucket-versioning \
@@ -47,8 +70,41 @@ jobs:
             --versioning-configuration Status=Enabled
 
       - name: Block All Public Access to State Bucket
+        if: github.event.inputs.action == 'create'
         run: |
           echo "Blocking public access to keep state files secure..."
           aws s3api put-public-access-block \
             --bucket ${{ env.S3_BUCKET_NAME }} \
             --public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+
+      # ==========================================
+      # DESTROY LOGIC
+      # ==========================================
+      - name: Empty Versioned S3 Bucket
+        if: github.event.inputs.action == 'destroy'
+        run: |
+          echo "Fetching and deleting all object versions..."
+          VERSIONS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}' --output=json)
+          
+          if echo "$VERSIONS" | grep -q '"Key"'; then
+            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$VERSIONS"
+          else
+            echo "No object versions found. Skipping."
+          fi
+
+          echo "Fetching and deleting all delete markers..."
+          MARKERS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' --output=json)
+          
+          if echo "$MARKERS" | grep -q '"Key"'; then
+            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$MARKERS"
+          else
+            echo "No delete markers found. Skipping."
+          fi
+
+      - name: Delete S3 Bucket
+        if: github.event.inputs.action == 'destroy'
+        run: |
+          echo "Deleting bucket: ${{ env.S3_BUCKET_NAME }}..."
+          aws s3api delete-bucket \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --region ${{ env.AWS_REGION }}
