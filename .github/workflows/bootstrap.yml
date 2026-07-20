@@ -1,4 +1,4 @@
-name: 1. Infrastructure Bootstrap (S3 State)
+name: 2. Infrastructure Bootstrap (S3 State)
 
 on:
   workflow_dispatch:

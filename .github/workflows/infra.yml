@@ -1,4 +1,4 @@
-name: 2. Infrastructure Lifecycle (Terraform)
+name: 3. Infrastructure Lifecycle (Terraform)
 
 on:
   pull_request:
