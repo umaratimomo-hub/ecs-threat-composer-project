@@ -80,31 +80,38 @@ jobs:
       # ==========================================
       # DESTROY LOGIC
       # ==========================================
-      - name: Empty Versioned S3 Bucket
+      - name: Empty and Delete S3 State Bucket
         if: github.event.inputs.action == 'destroy'
         run: |
-          echo "Fetching and deleting all object versions..."
-          VERSIONS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}' --output=json)
-          
-          if echo "$VERSIONS" | grep -q '"Key"'; then
-            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$VERSIONS"
-          else
-            echo "No object versions found. Skipping."
-          fi
+          BUCKET_NAME="${{ env.S3_BUCKET_NAME }}"
+          REGION="${{ env.AWS_REGION }}"
 
-          echo "Fetching and deleting all delete markers..."
-          MARKERS=$(aws s3api list-object-versions --bucket ${{ env.S3_BUCKET_NAME }} --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' --output=json)
-          
-          if echo "$MARKERS" | grep -q '"Key"'; then
-            aws s3api delete-objects --bucket ${{ env.S3_BUCKET_NAME }} --delete "$MARKERS"
+          echo "Checking if bucket '$BUCKET_NAME' exists..."
+          if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+            echo "Bucket '$BUCKET_NAME' does not exist or was already deleted. Skipping."
           else
-            echo "No delete markers found. Skipping."
-          fi
+            echo "Looping to purge all object versions..."
+            while true; do
+              VERSIONS=$(aws s3api list-object-versions --bucket "$BUCKET_NAME" --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}' --output=json)
+              if echo "$VERSIONS" | grep -q '"Key"'; then
+                aws s3api delete-objects --bucket "$BUCKET_NAME" --delete "$VERSIONS"
+              else
+                echo "No remaining object versions."
+                break
+              fi
+            done
 
-      - name: Delete S3 Bucket
-        if: github.event.inputs.action == 'destroy'
-        run: |
-          echo "Deleting bucket: ${{ env.S3_BUCKET_NAME }}..."
-          aws s3api delete-bucket \
-            --bucket ${{ env.S3_BUCKET_NAME }} \
-            --region ${{ env.AWS_REGION }}
+            echo "Looping to purge all delete markers..."
+            while true; do
+              MARKERS=$(aws s3api list-object-versions --bucket "$BUCKET_NAME" --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' --output=json)
+              if echo "$MARKERS" | grep -q '"Key"'; then
+                aws s3api delete-objects --bucket "$BUCKET_NAME" --delete "$MARKERS"
+              else
+                echo "No remaining delete markers."
+                break
+              fi
+            done
+
+            echo "Deleting S3 Bucket: $BUCKET_NAME..."
+            aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION"
+          fi
