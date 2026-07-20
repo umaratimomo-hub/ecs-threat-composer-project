@@ -44,9 +44,9 @@ variable "health_check_path" {
 }
 
 variable "ssl_policy" {
+  description = "SSL policy for HTTPS listener"
   type        = string
-  description = "The security policy for the ALB HTTPS listener"
-  default     = "ELBSecurityPolicy-2016-08"
+  default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 }
 
 variable "certificate_arn" {
