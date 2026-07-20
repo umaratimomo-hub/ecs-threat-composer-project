@@ -1,4 +1,4 @@
-name: 4. Application Lifecycle (App & Container)
+name: 3. Application Lifecycle (App & Container)
 
 on:
   pull_request:
@@ -16,8 +16,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write # Required for AWS OIDC authentication
-  contents: read  # Required for actions/checkout
+  id-token: write
+  contents: read
 
 env:
   AWS_REGION: ${{ vars.AWS_REGION }}
@@ -27,9 +27,6 @@ env:
   ECS_SERVICE: ${{ vars.ECS_SERVICE_NAME }}
 
 jobs:
-  # ==========================================
-  # JOB 1: LINT, TEST, SCAN & BUILD
-  # ==========================================
   ci-and-build:
     name: Application CI & Container Build
     runs-on: ubuntu-latest
@@ -38,7 +35,6 @@ jobs:
       - name: Checkout Application Code
         uses: actions/checkout@v4
 
-      # --- GATE 1: STATIC ANALYSIS & TESTING ---
       - name: Lint Dockerfile with Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
@@ -48,9 +44,7 @@ jobs:
       - name: Run Application Tests
         run: |
           echo "Running application unit tests..."
-          # cd app && npm install && npm test
 
-      # --- GATE 2: AWS INFRASTRUCTURE VERIFICATION (Deploy branches only) ---
       - name: Configure AWS Credentials via OIDC
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: aws-actions/configure-aws-credentials@v4
@@ -60,15 +54,18 @@ jobs:
 
       - name: Verify AWS Infrastructure Exists
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          CLUSTER: ${{ env.ECS_CLUSTER }}
+          SERVICE: ${{ env.ECS_SERVICE }}
+          REGION: ${{ env.AWS_REGION }}
         run: |
           echo "Verifying target ECS cluster and service..."
           if ! aws ecs describe-services \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_SERVICE }} \
-            --region ${{ env.AWS_REGION }} \
+            --cluster "$CLUSTER" \
+            --services "$SERVICE" \
+            --region "$REGION" \
             | grep -q "ACTIVE"; then
             echo "ERROR: Target ECS Infrastructure is missing or inactive!"
-            echo "DevOps team must run the infrastructure deployment workflow first."
             exit 1
           fi
           echo "Infrastructure verified successfully."
@@ -78,18 +75,21 @@ jobs:
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: aws-actions/amazon-ecr-login@v2
 
-      # --- GATE 3: CONTAINER BUILD & TRIVY SCAN ---
       - name: Build Docker Image
         id: build-image
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO: ${{ env.ECR_REPOSITORY }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "$EVENT_NAME" = "pull_request" ]; then
             TAG="test-build:latest"
           else
-            TAG="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest"
+            TAG="$REGISTRY/$REPO:latest"
           fi
           echo "Building image tagged as $TAG..."
           docker build -t "$TAG" .
-          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@0.35.0
@@ -101,20 +101,16 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-      # --- GATE 4: ECR PUSH (Deploy branches only) ---
       - name: Push image to Amazon ECR
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: docker push "${{ steps.build-image.outputs.image_tag }}"
 
-  # ==========================================
-  # JOB 2: ECS DEPLOYMENT (Requires Approval)
-  # ==========================================
   deploy-to-ecs:
     name: Deploy to ECS (DevOps Clearance)
     runs-on: ubuntu-latest
     needs: ci-and-build
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    environment: production # GATEKEEPER: Forces GitHub to wait for manual DevOps approval
+    environment: production
 
     steps:
       - name: Configure AWS Credentials via OIDC
@@ -124,9 +120,13 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Force ECS Deployment to Latest Revision
+        env:
+          CLUSTER: ${{ env.ECS_CLUSTER }}
+          SERVICE: ${{ env.ECS_SERVICE }}
+          REGION: ${{ env.AWS_REGION }}
         run: |
           aws ecs update-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service ${{ env.ECS_SERVICE }} \
+            --cluster "$CLUSTER" \
+            --service "$SERVICE" \
             --force-new-deployment \
-            --region ${{ env.AWS_REGION }}
+            --region "$REGION"
