@@ -37,7 +37,7 @@ resource "cloudflare_record" "cert_validation" {
 
   zone_id = var.cloudflare_zone_id
   name    = each.value.name
-  content   = each.value.value
+  content = each.value.value
   type    = each.value.type
   proxied = false
   ttl     = 60
