@@ -4,7 +4,7 @@
 ### What is a threat composer app?
 Threat Composer is a threat modeling ecosystem that helps identify security issues and develop strategies to address them in the system context. The process of threat modeling helps identify security issues and develop a strategy to address them. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service.
 
-
+### Repository Structure
 <p align="left">
   <img width="600" src="./Images/Repository structure.png">
 </p>
