@@ -3,6 +3,10 @@
 
 ### Project Overview
 project features - aim balance security, relaibility, availability, cost
+dry
+modular
+no nat gateway - endpoints used more secure save nat costs ~$25 pm
+PR to mimic real production environment. Extra environment control gate to approve of modified app before ecs image pull (protect system from breaking etc)
 
 Architecture diagram (Lucidchart / draw.io / Mermaid) - make sure it's finalised and as accurate as possible to your final infrastructure. 
 Screenshots of successful deployment and app running live on AWS via the domain. 
