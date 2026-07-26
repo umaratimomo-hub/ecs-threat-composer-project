@@ -27,31 +27,31 @@ Simple static app no need for granular customized server control. Fargate manage
 </p> 
 
 <p align="left">
-  <img width="600" src="./Images/workflow.png">
+  <img width="600" src="./Images/workflow linting pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/workflow.png">
+  <img width="600" src="./Images/bootsrap workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/workflow.png">
+  <img width="600" src="./Images/bootstrap destroy path pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/workflow.png">
+  <img width="600" src="./Images/infra deploy workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/app working.png">
+  <img width="600" src="./Images/infra destroy path pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/app working.png">
+  <img width="600" src="./Images/app-deploy workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/app working.png">
+  <img width="600" src="./Images/app running.png">
 </p>
 
 #Instructions to reproduce the setup. A short demo - optional.
