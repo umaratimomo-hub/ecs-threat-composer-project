@@ -46,4 +46,12 @@ Simple static app no need for granular customized server control. Fargate manage
   <img width="600" src="./Images/app working.png">
 </p>
 
+<p align="left">
+  <img width="600" src="./Images/app working.png">
+</p>
+
+<p align="left">
+  <img width="600" src="./Images/app working.png">
+</p>
+
 #Instructions to reproduce the setup. A short demo - optional.
