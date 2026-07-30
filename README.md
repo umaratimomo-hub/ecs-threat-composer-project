@@ -23,35 +23,35 @@ The threat composer is a simple static app which requires the user to fetch data
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/architecture diagram.png">
+  <img width="1000" src="./Images/architecture diagram.png">
 </p> 
 
 <p align="left">
-  <img width="600" src="./Images/workflow linting pass.png">
+  <img width="1000" src="./Images/workflow linting pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/bootsrap workflow pass.png">
+  <img width="1000" src="./Images/bootsrap workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/bootstrap destroy path pass.png">
+  <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/infra deploy workflow pass.png">
+  <img width="1000" src="./Images/infra deploy workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/infra destroy path pass.png">
+  <img width="1000" src="./Images/infra destroy path pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/app-deploy workflow pass.png">
+  <img width="1000" src="./Images/app-deploy workflow pass.png">
 </p>
 
 <p align="left">
-  <img width="600" src="./Images/app running.png">
+  <img width="1000" src="./Images/app running.png">
 </p>
 
 #Instructions to reproduce the setup. A short demo - optional.
