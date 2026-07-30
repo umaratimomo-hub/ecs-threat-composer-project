@@ -15,7 +15,7 @@ This project aimed to demonstrate the deployment of a threat composer applicatio
 Threat Composer is a threat modeling ecosystem that helps identify security issues and develop strategies to address them in the system context. The process of threat modeling helps identify security issues and develop a strategy to address them. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service.
 
 ### Why Fargate? 
-The threat composer is simple static app which requires the user to fetch data and use within their own system so no need for granular customized server control for a simple app. Fargate managing the server allows for more focus on infrastructure, reliability and security.
+The threat composer is a simple static app which requires the user to fetch data and use within their own system so no need for granular customized server control for a simple app. Fargate managing the server allows for more focus on infrastructure, reliability and security.
 
 ### Repository Structure
 <p align="left">
