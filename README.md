@@ -32,17 +32,23 @@ The threat composer is a simple static app which requires the user to fetch data
 <p align="left">
   <img width="600" src="./Images/Repository structure.png">
 </p>
+
 ---
+
 ### Architectural Diagram
 <p align="left">
   <img width="1000" src="./Images/architecture diagram.png">
 </p> 
+
 ---
+
 ### Live app demonstration on personalised Domain
 <p align="left">
   <img width="1000" src="./Images/app running.png">
 </p>
+
 ---
+
 ### CI/CD Workflows
 1. Workflow Linting - This workflow checks the correctness of all other workflows
 <p align="left">
