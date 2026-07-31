@@ -1,7 +1,7 @@
 # Production grade end-to-end ECS project
 ## Deployment of a threat composer web application via AWS using containerisation (Docker), IaC (Terraform), and CI/CD (Github Actions).
 
-![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) ![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge) ![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)  ![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
+![](https://img.shields.io/badge/LINUX-yellow?style=for-the-badge) ![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) ![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge) ![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)  ![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
 
 
 
@@ -33,14 +33,23 @@ The threat composer is a simple static app which requires the user to fetch data
   <img width="600" src="./Images/Repository structure.png">
 </p>
 
+### Architectural Diagram
 <p align="left">
   <img width="1000" src="./Images/architecture diagram.png">
 </p> 
 
+### Live app demonstration on personalised Domain
+<p align="left">
+  <img width="1000" src="./Images/app running.png">
+</p>
+
+### CI/CD Workflows
+1. Workflow Linting - This workflow checks the correctness of all other workflows
 <p align="left">
   <img width="1000" src="./Images/workflow linting pass.png">
 </p>
 
+2. Bootstrap workflow - This workflow provisions the S3 bucket via aws commands and allows for remote state capabilities when main infrastructure is created via terraform
 <p align="left">
   <img width="1000" src="./Images/bootsrap workflow pass.png">
 </p>
@@ -61,9 +70,7 @@ The threat composer is a simple static app which requires the user to fetch data
   <img width="1000" src="./Images/app-deploy workflow pass.png">
 </p>
 
-<p align="left">
-  <img width="1000" src="./Images/app running.png">
-</p>
+
 
 
 ### Achievements
