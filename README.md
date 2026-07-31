@@ -24,7 +24,7 @@
 
 ---
 
-## AWS Resources Used
+## AWS Services Used
 ![](https://img.shields.io/badge/ACM-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/IAM-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/IGW-orange?style=for-the-badge)
