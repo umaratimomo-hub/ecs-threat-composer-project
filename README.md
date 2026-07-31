@@ -1,6 +1,17 @@
 # Production grade end-to-end ECS project
 ## Deployment of a threat composer web application via AWS using containerisation (Docker), IaC (Terraform), and CI/CD (Github Actions).
 
+![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) ![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge) ![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)  ![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
+
+
+
+## Contents
+
+- [Project Overview](project-overview)
+- [What is a threat composer app?](what-is-a-threat-composer-app?)
+- [Achievements](achievements)
+
+
 ### Project Overview
 This project aimed to demonstrate the deployment of a threat composer application from being created by a software developer and working on a local computer, all the way to being shipped live via AWS cloud and accessed by millions of users over the internet. Along the way best practices were employed to ensure security, reliability, availability and cost were optimised as much as possible according to need and obectives. Other key features include:
 
@@ -53,5 +64,12 @@ The threat composer is a simple static app which requires the user to fetch data
 <p align="left">
   <img width="1000" src="./Images/app running.png">
 </p>
+
+
+### Achievements
+- Docker image size reduced from 840 - 33mb via lighter base image ~ 95% reduction
+- Infrastructure deployement time decreased from over 2 hours clicking in console to under 5mins via terraform and Github Actions workflows
+- 
+
 
 #Instructions to reproduce the setup. A short demo - optional.
