@@ -39,12 +39,12 @@
 ---
 
 ### Project Overview
-This project aimed to demonstrate the deployment of a threat composer application from being created by a software developer and working on a local computer, all the way to being shipped live via AWS cloud and accessed by millions of users over the internet. Along the way best practices were employed to ensure security, reliability, availability and cost were optimised as much as possible according to need and obectives. 
+This project aimed to demonstrate the deployment of a threat composer application from being created by a software developer and working on a local computer, all the way to being shipped live via AWS cloud and accessed by multiple teams within an environment. Along the way best practices were employed to ensure security, reliability, availability and cost were optimised as much as possible according to need and obectives. 
 
 ---
 
 ### What is a threat composer app?
-Threat Composer is a threat modeling ecosystem that helps identify security issues and develop strategies to address them in the system context. The process of threat modeling helps identify security issues and develop a strategy to address them. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service.
+Threat Composer is an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase by identifying security issues and developing strategies to address them in the system context. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service.
 
 ---
 
