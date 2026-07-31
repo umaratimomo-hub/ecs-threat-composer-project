@@ -1,15 +1,38 @@
 # Production grade end-to-end ECS project
 ## Deployment of a threat composer web application via AWS using containerisation (Docker), IaC (Terraform), and CI/CD (Github Actions).
 
-![](https://img.shields.io/badge/LINUX-yellow?style=for-the-badge&logo=linux&logoColor=black) ![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) ![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge) ![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)  ![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
-
 ---
 
 ## Contents
 
+- [Tech Stack](tech-stack)
+- [AWS Resources Used](aws-resources-used)
 - [Project Overview](project-overview)
 - [What is a threat composer app?](what-is-a-threat-composer-app?)
+- [How it works](how-it-works)
+- [Repository Structure](achievements)
+- [Architectural Diagram](architectural-diagram)
+- [Live app demonstration on personalised Domain](live-app-demonstration-on-personalised-domain)
+- [CI/CD Workflows](ci/cd-workflows)
 - [Achievements](achievements)
+- [Future Improvements](future-improvements)
+
+---
+
+## Tech Stack
+![](https://img.shields.io/badge/LINUX-yellow?style=for-the-badge&logo=linux&logoColor=black) ![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) ![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)  ![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
+
+---
+
+## AWS Resources Used
+![](https://img.shields.io/badge/ACM-orange?style=for-the-badge)
+![](https://img.shields.io/badge/IGW-orange?style=for-the-badge)
+![](https://img.shields.io/badge/VPC-orange?style=for-the-badge)
+![](https://img.shields.io/badge/ALB-orange?style=for-the-badge)
+![](https://img.shields.io/badge/ECR-orange?style=for-the-badge)
+![](https://img.shields.io/badge/S3-orange?style=for-the-badge)
+![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge)
+
 
 ---
 
