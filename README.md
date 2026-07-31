@@ -26,8 +26,10 @@
 
 ## AWS Resources Used
 ![](https://img.shields.io/badge/ACM-orange?style=for-the-badge)
+![](https://img.shields.io/badge/IAM-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/IGW-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/VPC-orange?style=for-the-badge)
+![](https://img.shields.io/badge/subnets-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/ALB-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/ECR-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/S3-orange?style=for-the-badge)
