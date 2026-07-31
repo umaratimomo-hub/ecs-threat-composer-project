@@ -6,7 +6,7 @@
 ## Contents
 
 - [Tech Stack](tech-stack)
-- [AWS Resources Used](aws-resources-used)
+- [AWS Services/Resources Used](aws-services/resources-used)
 - [Project Overview](project-overview)
 - [What is a threat composer app?](what-is-a-threat-composer-app?)
 - [How it works](how-it-works)
@@ -24,7 +24,7 @@
 
 ---
 
-## AWS Services Used
+## AWS Services/Resources Used
 ![](https://img.shields.io/badge/ACM-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/IAM-orange?style=for-the-badge)
 ![](https://img.shields.io/badge/IGW-orange?style=for-the-badge)
