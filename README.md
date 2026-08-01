@@ -5,40 +5,43 @@
 
 ## Contents
 
-- [Tech Stack](tech-stack)
-- [AWS Services Used](aws-services-used)
-- [Project Overview](project-overview)
-- [What is a threat composer app?](what-is-a-threat-composer-app?)
-- [How it works](how-it-works)
-- [Repository Structure](achievements)
-- [Architectural Diagram](architectural-diagram)
-- [Live app demonstration on personalised Domain](live-app-demonstration-on-personalised-domain)
-- [CI/CD Workflows](ci/cd-workflows)
-- [Achievements](achievements)
-- [Future Improvements](future-improvements)
+- [Tech Stack & DevOps Tools](#tech-stack--devops-tools)
+- [AWS Infrastructure Architecture](#aws-infrastructure-architecture)
+- [Project Overview](#project-overview)
+- [What is a threat composer app?](#what-is-a-threat-composer-app)
+- [How it works](#how-it-works)
+- [Repository Structure](#repository-structure)
+- [Architectural Diagram](#architectural-diagram)
+- [Live app demonstration on personalised Domain](#live-app-demonstration-on-personalised-domain)
+- [CI/CD Workflows](#cicd-workflows)
+- [Achievements](#achievements)
+- [Future Improvements](#future-improvements)
 
 ---
 
-## Tech Stack
-![](https://img.shields.io/badge/LINUX-yellow?style=for-the-badge&logo=linux&logoColor=black) 
-![](https://img.shields.io/badge/GIT-red?style=for-the-badge&logo=git&logoColor=black) 
-![](https://img.shields.io/badge/AWS-orange?style=for-the-badge) 
-![Docker](https://img.shields.io/badge/-Docker-blue?style=for-the-badge&logo=docker&logoColor=white) 
-![Terraform](https://img.shields.io/badge/-Terraform-purple?style=for-the-badge&logo=terraform&logoColor=black) 
-![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-blue?style=for-the-badge&logo=github-actions&logoColor=white)
+## Tech Stack & DevOps Tools
+![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
+![](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
+![](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+![](https://img.shields.io/badge/Trivy_Security-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
+![](https://img.shields.io/badge/Cloudflare_DNS-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
 ---
 
-## AWS Services Used
-![](https://img.shields.io/badge/ACM-orange?style=for-the-badge)
-![](https://img.shields.io/badge/IAM-orange?style=for-the-badge)
-![](https://img.shields.io/badge/IGW-orange?style=for-the-badge)
-![](https://img.shields.io/badge/VPC-orange?style=for-the-badge)
-![](https://img.shields.io/badge/subnets-orange?style=for-the-badge)
-![](https://img.shields.io/badge/ALB-orange?style=for-the-badge)
-![](https://img.shields.io/badge/ECR-orange?style=for-the-badge)
-![](https://img.shields.io/badge/S3-orange?style=for-the-badge)
-![](https://img.shields.io/badge/ECS&Fargate-orange?style=for-the-badge)
+## AWS Infrastructure Architecture
+![](https://img.shields.io/badge/Amazon_ECS_&_Fargate-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Amazon_ECR-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Application_Load_Balancer-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Amazon_VPC-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Subnets_&_IGW-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Security_Groups-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/AWS_IAM_(OIDC)-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/AWS_ACM-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/Amazon_S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
+![](https://img.shields.io/badge/Amazon_CloudWatch-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 
 
 ---
