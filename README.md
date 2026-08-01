@@ -59,12 +59,48 @@
 ---
 
 ### Project Overview
-This project aimed to demonstrate the deployment of a threat composer application from being created by a software developer and working on a local computer, all the way to being shipped live via AWS cloud and accessed by multiple teams within an environment. Along the way best practices were employed to ensure security, reliability, availability and cost were optimised as much as possible according to need and obectives. 
+This project aimed to demonstrate the deployment of a threat composer application from being created by a software developer and working on a local computer, all the way to being shipped live via AWS cloud and accessed by multiple teams within an environment. Along the way best practices were employed to ensure security, reliability, availability and cost were optimised as much as possible according to need and objectives. This project was built with a Platform Engineering mindset—focusing on developer self-service, automated guardrails, and reusable infrastructure to help reduce cognitive load.
 
 ---
 
 ### What is a threat composer app?
-Threat Composer is an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase by identifying security issues and developing strategies to address them in the system context. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service.
+Threat Composer is an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase by identifying security issues and developing strategies to address them in the system context. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. The Threat Composer provides a structured, dashboard-style interface where teams can document system architecture, identify threats, and assign mitigations. In my deployment, I took the application, containerized it, and hosted it securely behind an Application Load Balancer with strict HTTPS enforcement, integrating it with a fully automated CI/CD pipeline.
+
+### Why I chose this specific app?
+I chose the Threat Composer for three main reasons:
+
+- Focus on DevSecOps: As a DevOps engineer, I wanted to deploy an application that reflects a security-first mindset. Deploying a threat modeling tool perfectly complements the secure pipeline I built, which includes Trivy vulnerability scanning and OIDC authentication.
+
+- Real-World Enterprise Relevance: I wanted to move beyond basic 'Hello World' or standard to-do list apps. Threat Composer is a legitimate tool used by enterprise security teams, which proves I can take real-world, production-grade software and operationalize it.
+
+- Containerization: It allowed me to demonstrate my ability to package a modern web application into a Docker container, optimize the Dockerfile, and push it through an Amazon ECR and ECS lifecycle.
+
+### Why I hosted it on ECS with Fargate?
+I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting like that provided by platforms such as Vercel, which are best used for quick static site deployments. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows an understanding of how the cloud actually works beyond surface level. By containerizing the app and using ECS, the deployment is immutable, self-healing (automatically replacing a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
+
+Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning which would lead to a higher operational overhead. 
+
+4. How many users are you expecting, and how does it scale?
+Because Threat Composer is a specialized engineering and security tool, I architected this for an internal enterprise use case—expecting a user base of roughly 50 to 200 developers and security architects.
+
+Traffic Patterns & Scale:
+
+The load wouldn't be viral (like a consumer social media app). Instead, it would be 'spikey' during standard business hours, particularly during sprint planning or architecture review meetings.
+
+Because I deployed it on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
+
+Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the static assets (HTML, CSS, JS) are cached at the edge. This means the actual ECS containers only need to handle core application logic, heavily reducing the compute load and allowing the app to handle hundreds of concurrent users easily.
+
+## Platform Engineering Highlights
+
+* **"Golden Path" Deployment Pipelines:** Designed fully automated GitHub Actions workflows (`app.yml` and `infra.yml`) that abstract away AWS authentication (via OIDC) and container orchestration. Developers only need to push their code; the platform handles the build, security scans, and ECS deployment automatically.
+* **Automated Guardrails & Shift-Left Security:** Integrated Trivy and Hadolint directly into the CI/CD pipeline to catch vulnerabilities and Dockerfile anti-patterns before they reach the registry. Terraform configuration is automatically verified via `terraform fmt` and `terraform validate` on every push.
+* **Modular Infrastructure as Code (IaC):** Structured the Terraform codebase into reusable, logical modules (VPC, ALB, ECS, ECR). This allows for standardized, repeatable provisioning of AWS resources across different environments without duplicating code.
+* **Ephemeral Environments & Lifecycle Management:** Built robust, automated teardown logic (`destroy` workflows) that systematically empties versioned S3 state buckets and force-deletes ECR repositories. This allows the team to spin up fully isolated environments for testing and tear them down to $0.00 infrastructure cost with a single click.
+* **Secretless Authentication:** Replaced long-lived, static AWS IAM user keys with GitHub Actions OIDC (OpenID Connect). This eliminates the risk of leaked credentials and provides short-lived, dynamically scoped access for the deployment pipelines.
+
+---
+
 
 ---
 
@@ -135,36 +171,6 @@ The threat composer is a simple static app which requires the user to fetch data
 
 ---
 
-1. What is this App?
-The application I deployed is Threat Composer, an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase.
 
-Instead of relying on messy spreadsheets or complex diagramming tools, Threat Composer provides a structured, dashboard-style interface where teams can document system architecture, identify threats, and assign mitigations. In my deployment, I took the application, containerized it, and hosted it securely behind an Application Load Balancer with strict HTTPS enforcement, integrating it with a fully automated CI/CD pipeline.
-
-2. Why did you choose this specific app?
-I chose Threat Composer for three main reasons:
-
-Focus on DevSecOps: As a DevOps engineer, I wanted to deploy an application that reflects a security-first mindset. Deploying a threat modeling tool perfectly complements the secure pipeline I built, which includes Trivy vulnerability scanning and OIDC authentication.
-
-Real-World Enterprise Relevance: I wanted to move beyond basic 'Hello World' or standard to-do list apps. Threat Composer is a legitimate tool used by enterprise security teams, which proves I can take real-world, production-grade software and operationalize it.
-
-Containerization Challenge: It allowed me to demonstrate my ability to package a modern web application into a Docker container, optimize the Dockerfile, and push it through an Amazon ECR and ECS lifecycle.
-
-3. Why did you host it on ECS? (Why not a VM, Vercel, or Netlify?)
-I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting.
-
-While those platforms are fantastic for quick static site deployments, they abstract away the entire network and infrastructure layer. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows I understand how the cloud actually works under the hood.
-
-Deploying straight to a Linux VM requires manual OS patching, manual scaling, and higher operational overhead. By containerizing the app and using ECS, the deployment is immutable, self-healing (ECS will automatically replace a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
-
-4. How many users are you expecting, and how does it scale?
-Because Threat Composer is a specialized engineering and security tool, I architected this for an internal enterprise use case—expecting a user base of roughly 50 to 200 developers and security architects.
-
-Traffic Patterns & Scale:
-
-The load wouldn't be viral (like a consumer social media app). Instead, it would be 'spikey' during standard business hours, particularly during sprint planning or architecture review meetings.
-
-Because I deployed it on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
-
-Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the static assets (HTML, CSS, JS) are cached at the edge. This means the actual ECS containers only need to handle core application logic, heavily reducing the compute load and allowing the app to handle hundreds of concurrent users easily.
 
 #Instructions to reproduce the setup. A short demo - optional.
