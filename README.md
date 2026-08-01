@@ -153,7 +153,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/bootstrap workflow pass.png">
 </p>
 
-2. Bootstrap workflow - destroy - This option of the bootstrap workflow empties and destroys the S3 bucket upon manual input of the word 'DESTROY'.
+2. Bootstrap workflow - destroy - This option of the bootstrap workflow empties and destroys the S3 bucket upon manual input of the word 'DESTROY'
 <p align="left">
   <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
