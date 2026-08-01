@@ -143,7 +143,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### CI/CD Workflows
-1. Workflow Linting - This workflow checks the correctness of all other workflows
+1. Workflow Linting - This workflow checks the correctness of all other workflows and any changes to the repository files.
 <p align="left">
   <img width="1000" src="./Images/workflow linting pass.png">
 </p>
@@ -200,7 +200,7 @@ git clone https://github.com/umaratimomo-hub/ecs-threat-composer-project
 
 ```
 
-Go to GitHub Actions
+Go to GitHub Actions:
 click on bootstrap.yml --> Run workflow --> Create --> Run workflow
 
 Go to infra.yml
@@ -208,3 +208,16 @@ click on infra.yml --> Run workflow --> Create --> Run workflow
 
 Go to app.yml 
 click on app.yml --> Run workflow --> Run workflow
+
+A message will be sent to the owner of the GitHub account to give permission to the ECS task to pull the image from the repository.
+
+Within seconds the app should go live.
+
+To destroy the infrastructure:
+click on infra.yml --> Run workflow --> Destroy --> Confirm choice by typing DESTROY --> Run workflow
+
+To destroy the S3 bucket:
+click on bootstrap.yml --> Run workflow --> Destroy --> Confirm choice by typing DESTROY --> Run workflow
+
+
+
