@@ -5,8 +5,10 @@
 
 ## Contents
 
-- [Tech Stack & DevOps Tools](#tech-stack--devops-tools)
-- [AWS Infrastructure Architecture](#aws-infrastructure-architecture)
+- [Core Technologies](#core-technologies)
+- [Automation & Infrastructure as Code](#automation--infrastructure-as-code)
+- [DevSecOps & Security](#devsecops--security)
+- [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Overview](#project-overview)
 - [What is a threat composer app?](#what-is-a-threat-composer-app)
 - [How it works](#how-it-works)
@@ -19,30 +21,40 @@
 
 ---
 
-## Tech Stack & DevOps Tools
+## Core Technologies
 ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
-![](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
-![](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-![](https://img.shields.io/badge/Trivy_Security-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
+![](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![](https://img.shields.io/badge/Cloudflare_DNS-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
 ---
 
-## AWS Infrastructure Architecture
+## Automation & Infrastructure as Code
+![](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
+![](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+
+---
+
+## DevSecOps & Security
+![](https://img.shields.io/badge/Hadolint_(Dockerfile)-004088?style=for-the-badge&logo=docker&logoColor=white)
+![](https://img.shields.io/badge/Trivy_Image_Scanner-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
+![](https://img.shields.io/badge/Trivy_Security_Scanner-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
+![](https://img.shields.io/badge/AWS_ECR_Scan_On_Push-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+![](https://img.shields.io/badge/AWS_IAM_(OIDC)-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+
+---
+
+## AWS Cloud Architecture
 ![](https://img.shields.io/badge/Amazon_ECS_&_Fargate-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Amazon_ECR-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Application_Load_Balancer-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Amazon_VPC-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Subnets_&_IGW-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Security_Groups-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/AWS_IAM_(OIDC)-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/AWS_ACM-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Amazon_S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
 ![](https://img.shields.io/badge/Amazon_CloudWatch-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-
 
 ---
 
