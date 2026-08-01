@@ -194,3 +194,11 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### Instructions to reproduce the setup
+git clone https://github.com/umaratimomo-hub/ecs-threat-composer-project
+go to GitHub Actions
+click on bootstrap.yml --> Run workflow --> Create --> Run
+
+Go to infra.yml
+click on infra.yml --> Run workflow --> Create --> Run
+
+go to app.yml 
