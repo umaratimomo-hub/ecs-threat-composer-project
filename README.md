@@ -87,13 +87,13 @@ Several benefits were obtained by using Fargate instead of deploying straight to
 ---
 
 ### Expected traffic and scaling capabilities
-Threat Composer is a specialized engineering and security tool, and thus it was architected for an internal enterprise use case, expecting a user base of roughly 50 to 200 developers and security architects.
+Threat Composer is a specialized engineering and security tool, and thus it was architected for an internal enterprise use case, expecting a user base of roughly up to a few hundred developers and security architects.
 
 Traffic Patterns & Scale:
 
 Due to the nature of the app, the load is expected to have various peaks during standard business hours, rather than being in constant demand, particularly during sprint planning or architecture review meetings.
 
-As it is deployed on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
+As it is deployed on ECS behind an ALB, the architecture is scalable by default. If a large team is doing a security audit and CPU/Memory utilisation spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
 
 Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the static assets (HTML, CSS, JS) are cached at the edge. This means the actual ECS containers only need to handle core application logic, heavily reducing the compute load and allowing the app to handle hundreds of concurrent users easily.
 
@@ -136,23 +136,27 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/workflow linting pass.png">
 </p>
 
-2. Bootstrap workflow - This workflow provisions the S3 bucket via aws commands and allows for remote state capabilities when main infrastructure is created via terraform
+2. Bootstrap workflow - create - This option of the bootstrap workflow provisions the S3 bucket via AWS CLI after successful CI testing stages allowing for remote state capabilities when main infrastructure is created via terraform
 <p align="left">
   <img width="1000" src="./Images/bootsrap workflow pass.png">
 </p>
 
+2. Bootstrap workflow - destroy - This option of the bootstrap workflow empties and destroys the S3 bucket upon manual input of the word 'DESTROY'.
 <p align="left">
   <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
 
+3. Infrasructure workflow - create - This option of the Infrasructure workflow provisions all AWS services and resources via terraform after successful CI testing stages
 <p align="left">
   <img width="1000" src="./Images/infra deploy workflow pass.png">
 </p>
 
+3. Infrasructure workflow - destroy - This option of the Infrasructure workflow destroys the S3 bucket upon manual input of the word 'DESTROY'.
 <p align="left">
   <img width="1000" src="./Images/infra destroy path pass.png">
 </p>
 
+4. Application deploy workflow - This workflow containerises, tests and deploys the app to the ECR where it waits for infrastucture-team approval to be pulled by the ECS task service
 <p align="left">
   <img width="1000" src="./Images/app-deploy workflow pass.png">
 </p>
