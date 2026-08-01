@@ -11,7 +11,7 @@
 - [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Overview](#project-overview)
 - [What is a threat composer app?](#what-is-a-threat-composer-app)
-- [Why I hosted it on ECS with Fargate](#Why-i-hosted-it-on-ecs-with-fargate)
+- [Why I hosted it on ECS with Fargate](#why-i-hosted-it-on-ecs-with-fargate)
 - [Expected traffic and scaling capabilities](#expected-traffic-and-scaling-capabilities)
 - [Platform Engineering features](#platform-engineering-features)
 - [How it works](#how-it-works)
@@ -21,6 +21,7 @@
 - [CI/CD Workflows](#cicd-workflows)
 - [Achievements](#achievements)
 - [Future Improvements](#future-improvements)
+- [Instructions to reproduce the setup](#instructions-to-reproduce-the-setup)
 
 ---
 
@@ -113,7 +114,10 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### How it works
-
+- Worklow linter checks all worklfows for correctness and conformity when any workflow is activated.
+- Infrastructure Engineer manually activates the bootstrap workflow which creates the S3 bucket which includes native state locking and therefore is free of need of dynamo DB.
+- Infrastructure Engineer either manually activates the infrastructure workflow by selecting the create option on the infra workflow or by having a pull request, to amend the infra folder, successfully merged. This triggers test and plan part of the workflow. The build part is activated automatically via the 'depends on' option which only activates on successful completion of the previous test and plan step. Within the ECR creation step, a tiny placeholder image is pushed to the newly created repository so that the ECS task does not fail. This is later updated by the real image pushed by the Software Engineer.
+- Once infra is set up, the Software Engineer is able to either manually activate the app deploy workflow by selecting the create option or by having a pull request, to amend the app folder, successfully merged. Once the image is pushed to the ECR, it requires a sign-off from an infrastructure Engineer so he is aware of any changes preventing the system from breaking if pushed at an inconvenient time.
 
 ---
 
@@ -154,17 +158,17 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
 
-3. Infrasructure workflow - create - This option of the Infrasructure workflow provisions all AWS services and resources via terraform (CD) only after successful testing c stages
+3. Infrastructure workflow - create - This option of the Infrastructure workflow provisions all AWS services and resources via terraform (CD) only after successful testing stages (CI). It is triggered by a successfully merged pull request linked to any infrastructure folder related file changes.
 <p align="left">
   <img width="1000" src="./Images/infra deploy workflow pass.png">
 </p>
 
-3. Infrasructure workflow - destroy - This option of the Infrasructure workflow destroys the S3 bucket upon manual input of the word 'DESTROY'.
+3. Infrasructure workflow - destroy - This option of the Infrastructure workflow destroys all AWS services and resources upon manual input of the word 'DESTROY'.
 <p align="left">
   <img width="1000" src="./Images/infra destroy path pass.png">
 </p>
 
-4. Application deploy workflow - This workflow containerises, tests (CI) and deploys (CD) the app to the ECR where it waits for infrastucture-team approval to be pulled by the ECS task service
+4. Application deploy workflow - This workflow containerises, tests (CI) and deploys (CD) the app to the ECR where it waits for infrastructure-team approval to be pulled by the ECS task service. It is triggered by a successfully merged pull request linked to any app folder related file changes.
 <p align="left">
   <img width="1000" src="./Images/app-deploy workflow pass.png">
 </p>
@@ -172,17 +176,19 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### Achievements
-- Docker image size reduced from 840 - 33mb via lighter base image ~ 95% reduction
-- Infrastructure deployement time decreased from over 2 hours clicking in console to under 5mins via terraform and Github Actions workflows
-- minimising the use of hardcoded values within code by using variables where possible (aids in reducing the access to main code during ammendments, and allows for code to be resuable)
+- Docker image size reduced from 884mb - 33.1mb via slim base image and multi-stage build implementation ~ 95% reduction
+- Infrastructure deployment time decreased from over 2 hours clicking in console to under 5mins via terraform and GitHub Actions workflows
+- minimising the use of hardcoded values within code by using variables where possible (aids in reducing the access to main code during amendments, and allows for code to be reusable)
 - keeping all code in accordance with DRY principles by refactoring code as much as possible (code is easier to read and follow)
-- using modules in terraform (increases resuability, allows faster deployment among others)
-- using VPC enpoints to connect to resources internally within AWS thus having no need for a NAT gateway leading to bennefiitss such as reduced attack surface and improved security, reduced monthly billing (NAT ~ $25pm)
-- multiple workflows for Developers and DEvOps engineers PR to mimic real production environment.
+- using modules in terraform (increases reusability, allows faster deployment among others)
+- using VPC endpoints to connect to resources internally within AWS thus having no need for a NAT gateway leading to benefits such as reduced attack surface and improved security, reduced monthly billing (NAT ~ $25pm)
+- multiple workflows for Developers and DevOps engineers PR to mimic real production environment.
 - Extra environment control gate to approve of modified app before ecs image pull (protect system from breaking etc)
 
 ---
 
+### Future Improvements
+- use route53 as a sub host from Cloudflare
+- add further observability by incorporating Grafana and Prometheus 
 
-
-#Instructions to reproduce the setup. A short demo - optional.
+### Instructions to reproduce the setup
