@@ -86,12 +86,12 @@ Several benefits were obtained by using Fargate instead of deploying straight to
 
 ---
 
-### Expected number of users and scaling capabilities
+### Expected traffic and scaling capabilities
 Threat Composer is a specialized engineering and security tool, and thus it was architected for an internal enterprise use case, expecting a user base of roughly 50 to 200 developers and security architects.
 
 Traffic Patterns & Scale:
 
-Due to the nature of the app, rather than being in constant demand, the load is expected to have various peaks during standard business hours, particularly during sprint planning or architecture review meetings.
+Due to the nature of the app, the load is expected to have various peaks during standard business hours, rather than being in constant demand, particularly during sprint planning or architecture review meetings.
 
 As it is deployed on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
 
@@ -99,18 +99,13 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 
 ---
 
-### Platform Engineering Highlights
+### Platform Engineering features
 
 * **"Golden Path" Deployment Pipelines:** Designed fully automated GitHub Actions workflows (`app.yml` and `infra.yml`) that abstract away AWS authentication (via OIDC) and container orchestration. Developers only need to push their code; the platform handles the build, security scans, and ECS deployment automatically.
 * **Automated Guardrails & Shift-Left Security:** Integrated Trivy and Hadolint directly into the CI/CD pipeline to catch vulnerabilities and Dockerfile anti-patterns before they reach the registry. Terraform configuration is automatically verified via `terraform fmt` and `terraform validate` on every push.
 * **Modular Infrastructure as Code (IaC):** Structured the Terraform codebase into reusable, logical modules (VPC, ALB, ECS, ECR). This allows for standardized, repeatable provisioning of AWS resources across different environments without duplicating code.
 * **Ephemeral Environments & Lifecycle Management:** Built robust, automated teardown logic (`destroy` workflows) that systematically empties versioned S3 state buckets and force-deletes ECR repositories. This allows the team to spin up fully isolated environments for testing and tear them down to $0.00 infrastructure cost with a single click.
 * **Secretless Authentication:** Replaced long-lived, static AWS IAM user keys with GitHub Actions OIDC (OpenID Connect). This eliminates the risk of leaked credentials and provides short-lived, dynamically scoped access for the deployment pipelines.
-
----
-
-### Why Fargate? 
-
 
 ---
 
