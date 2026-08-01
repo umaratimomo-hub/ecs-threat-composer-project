@@ -11,6 +11,9 @@
 - [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Overview](#project-overview)
 - [What is a threat composer app?](#what-is-a-threat-composer-app)
+- [Why I hosted it on ECS with Fargate](#Why-i-hosted-it-on-ecs-with-fargate)
+- [Expected traffic and scaling capabilities](#expected-traffic-and-scaling-capabilities)
+- [Platform Engineering features](#platform-engineering-features)
 - [How it works](#how-it-works)
 - [Repository Structure](#repository-structure)
 - [Architectural Diagram](#architectural-diagram)
@@ -79,7 +82,7 @@ I chose the Threat Composer for three main reasons:
 
 ---
 
-### Why I hosted it on ECS with Fargate?
+### Why I hosted it on ECS with Fargate
 I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting like that provided by platforms such as Vercel, which are best used for quick static site deployments. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows an understanding of how the cloud actually works beyond surface level. By containerizing the app and using ECS, the deployment is immutable, self-healing (automatically replacing a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
 
 Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning leading to a higher operational overhead. Fargate managing the server allows for more focus on infrastructure, reliability and security. As the threat composer is a simple static app which requires the user to fetch data and use within their own system, there is not much need for granular customized server control.
@@ -106,6 +109,11 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 * **Modular Infrastructure as Code (IaC):** Structured the Terraform codebase into reusable, logical modules (VPC, ALB, ECS, ECR). This allows for standardized, repeatable provisioning of AWS resources across different environments without duplicating code.
 * **Ephemeral Environments & Lifecycle Management:** Built robust, automated teardown logic (`destroy` workflows) that systematically empties versioned S3 state buckets and force-deletes ECR repositories. This allows the team to spin up fully isolated environments for testing and tear them down to $0.00 infrastructure cost with a single click.
 * **Secretless Authentication:** Replaced long-lived, static AWS IAM user keys with GitHub Actions OIDC (OpenID Connect). This eliminates the risk of leaked credentials and provides short-lived, dynamically scoped access for the deployment pipelines.
+
+---
+
+### How it works
+
 
 ---
 
@@ -136,7 +144,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/workflow linting pass.png">
 </p>
 
-2. Bootstrap workflow - create - This option of the bootstrap workflow provisions the S3 bucket via AWS CLI after successful CI testing stages allowing for remote state capabilities when main infrastructure is created via terraform
+2. Bootstrap workflow - create - This option of the bootstrap workflow provisions the S3 bucket via AWS CLI allowing for remote state capabilities when main infrastructure is created via terraform
 <p align="left">
   <img width="1000" src="./Images/bootsrap workflow pass.png">
 </p>
@@ -146,7 +154,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
 
-3. Infrasructure workflow - create - This option of the Infrasructure workflow provisions all AWS services and resources via terraform after successful CI testing stages
+3. Infrasructure workflow - create - This option of the Infrasructure workflow provisions all AWS services and resources via terraform (CD) only after successful testing c stages
 <p align="left">
   <img width="1000" src="./Images/infra deploy workflow pass.png">
 </p>
@@ -156,7 +164,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/infra destroy path pass.png">
 </p>
 
-4. Application deploy workflow - This workflow containerises, tests and deploys the app to the ECR where it waits for infrastucture-team approval to be pulled by the ECS task service
+4. Application deploy workflow - This workflow containerises, tests (CI) and deploys (CD) the app to the ECR where it waits for infrastucture-team approval to be pulled by the ECS task service
 <p align="left">
   <img width="1000" src="./Images/app-deploy workflow pass.png">
 </p>
