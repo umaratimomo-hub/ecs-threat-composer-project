@@ -66,6 +66,8 @@ This project aimed to demonstrate the deployment of a threat composer applicatio
 ### What is a threat composer app?
 Threat Composer is an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase by identifying security issues and developing strategies to address them in the system context. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. The Threat Composer provides a structured, dashboard-style interface where teams can document system architecture, identify threats, and assign mitigations. In my deployment, I took the application, containerized it, and hosted it securely behind an Application Load Balancer with strict HTTPS enforcement, integrating it with a fully automated CI/CD pipeline.
 
+---
+
 ### Why I chose this specific app?
 I chose the Threat Composer for three main reasons:
 
@@ -75,10 +77,14 @@ I chose the Threat Composer for three main reasons:
 
 - Containerization: It allowed me to demonstrate my ability to package a modern web application into a Docker container, optimize the Dockerfile, and push it through an Amazon ECR and ECS lifecycle.
 
+---
+
 ### Why I hosted it on ECS with Fargate?
 I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting like that provided by platforms such as Vercel, which are best used for quick static site deployments. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows an understanding of how the cloud actually works beyond surface level. By containerizing the app and using ECS, the deployment is immutable, self-healing (automatically replacing a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
 
 Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning leading to a higher operational overhead. 
+
+---
 
 ### Expected number of users and scaling capabilities
 Threat Composer is a specialized engineering and security tool, and thus it was architected for an internal enterprise use case, expecting a user base of roughly 50 to 200 developers and security architects.
@@ -90,6 +96,8 @@ Due to the nature of the app, rather than being in constant demand, the load is 
 As it is deployed on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
 
 Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the static assets (HTML, CSS, JS) are cached at the edge. This means the actual ECS containers only need to handle core application logic, heavily reducing the compute load and allowing the app to handle hundreds of concurrent users easily.
+
+---
 
 ## Platform Engineering Highlights
 
