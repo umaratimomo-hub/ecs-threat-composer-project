@@ -78,16 +78,16 @@ I chose the Threat Composer for three main reasons:
 ### Why I hosted it on ECS with Fargate?
 I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting like that provided by platforms such as Vercel, which are best used for quick static site deployments. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows an understanding of how the cloud actually works beyond surface level. By containerizing the app and using ECS, the deployment is immutable, self-healing (automatically replacing a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
 
-Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning which would lead to a higher operational overhead. 
+Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning leading to a higher operational overhead. 
 
-4. How many users are you expecting, and how does it scale?
-Because Threat Composer is a specialized engineering and security tool, I architected this for an internal enterprise use case—expecting a user base of roughly 50 to 200 developers and security architects.
+### Expected number of users and scaling capabilities
+Threat Composer is a specialized engineering and security tool, and thus it was architected for an internal enterprise use case, expecting a user base of roughly 50 to 200 developers and security architects.
 
 Traffic Patterns & Scale:
 
-The load wouldn't be viral (like a consumer social media app). Instead, it would be 'spikey' during standard business hours, particularly during sprint planning or architecture review meetings.
+Due to the nature of the app, rather than being in constant demand, the load is expected to have various peaks during standard business hours, particularly during sprint planning or architecture review meetings.
 
-Because I deployed it on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
+As it is deployed on ECS behind an ALB, the architecture is inherently scalable. If a large team is doing a massive security audit and CPU/Memory utilization spikes, ECS can easily be configured with Auto Scaling policies to spin up additional container tasks dynamically.
 
 Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the static assets (HTML, CSS, JS) are cached at the edge. This means the actual ECS containers only need to handle core application logic, heavily reducing the compute load and allowing the app to handle hundreds of concurrent users easily.
 
