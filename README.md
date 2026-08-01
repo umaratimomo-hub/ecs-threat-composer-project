@@ -68,7 +68,7 @@ Threat Composer is an open-source threat modeling tool originally developed by A
 
 ---
 
-### Why I chose this specific app?
+### Why I chose the Threat Composer app?
 I chose the Threat Composer for three main reasons:
 
 - Focus on DevSecOps: As a DevOps engineer, I wanted to deploy an application that reflects a security-first mindset. Deploying a threat modeling tool perfectly complements the secure pipeline I built, which includes Trivy vulnerability scanning and OIDC authentication.
@@ -82,7 +82,7 @@ I chose the Threat Composer for three main reasons:
 ### Why I hosted it on ECS with Fargate?
 I specifically chose Amazon ECS (Elastic Container Service) because my goal was to demonstrate deep cloud infrastructure and container orchestration skills, not just frontend hosting like that provided by platforms such as Vercel, which are best used for quick static site deployments. By using ECS, I proved that I can architect the underlying VPC, configure public/private subnets, manage routing, secure an Application Load Balancer, and write the Terraform IaC to provision it all. It shows an understanding of how the cloud actually works beyond surface level. By containerizing the app and using ECS, the deployment is immutable, self-healing (automatically replacing a crashed task), and much easier to scale horizontally without worrying about the underlying operating system.
 
-Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning leading to a higher operational overhead. 
+Several benefits were obtained by using Fargate instead of deploying straight to an EC2 instance which would require manual OS patching, and underlying compute provisioning leading to a higher operational overhead. Fargate managing the server allows for more focus on infrastructure, reliability and security. As the threat composer is a simple static app which requires the user to fetch data and use within their own system, there is not much need for granular customized server control.
 
 ---
 
@@ -99,7 +99,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 
 ---
 
-## Platform Engineering Highlights
+### Platform Engineering Highlights
 
 * **"Golden Path" Deployment Pipelines:** Designed fully automated GitHub Actions workflows (`app.yml` and `infra.yml`) that abstract away AWS authentication (via OIDC) and container orchestration. Developers only need to push their code; the platform handles the build, security scans, and ECS deployment automatically.
 * **Automated Guardrails & Shift-Left Security:** Integrated Trivy and Hadolint directly into the CI/CD pipeline to catch vulnerabilities and Dockerfile anti-patterns before they reach the registry. Terraform configuration is automatically verified via `terraform fmt` and `terraform validate` on every push.
@@ -109,11 +109,8 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 
 ---
 
-
----
-
 ### Why Fargate? 
-The threat composer is a simple static app which requires the user to fetch data and use within their own system so no need for granular customized server control for a simple app. Fargate managing the server allows for more focus on infrastructure, reliability and security.
+
 
 ---
 
