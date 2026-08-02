@@ -176,7 +176,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### Achievements
-- Docker image size reduced from 884mb - 33.1mb via slim base image and multi-stage build implementation ~ 95% reduction
+- Docker image size reduced from 884mb - 33.1mb via slim base image and multi-stage build implementation ~ 96.3% reduction
   
 <p align="left">
   <img width="600" src="./Images/original image size.png">
