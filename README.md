@@ -153,7 +153,7 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
   <img width="1000" src="./Images/bootstrap workflow pass.png">
 </p>
 
-2. Bootstrap workflow - destroy - This option of the bootstrap workflow empties and destroys the S3 bucket upon manual input of the word 'DESTROY'.
+2. Bootstrap workflow - destroy - This option of the bootstrap workflow empties and destroys the S3 bucket upon manual input of the word 'DESTROY'
 <p align="left">
   <img width="1000" src="./Images/bootstrap destroy path pass.png">
 </p>
@@ -176,7 +176,16 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### Achievements
-- Docker image size reduced from 884mb - 33.1mb via slim base image and multi-stage build implementation ~ 95% reduction
+- Docker image size reduced from 884mb - 33.1mb via slim base image and multi-stage build implementation ~ 96.3% reduction
+  
+<p align="left">
+  <img width="600" src="./Images/original image size.png">
+</p>
+
+<p align="left">
+  <img width="600" src="./Images/image size after slim and multi stage.png">
+</p>
+
 - Infrastructure deployment time decreased from over 2 hours clicking in console to under 5 minutes via Terraform and GitHub Actions workflows
 - Minimised the use of hardcoded values within code by using variables where possible (aids in reducing the access to main code during amendments, and allows for code to be reusable)
 - Kept all code in accordance with DRY principles by refactoring code as much as possible (code is easier to read and follow)
