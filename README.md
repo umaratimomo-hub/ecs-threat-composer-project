@@ -1,16 +1,16 @@
 # Production grade end-to-end ECS project
-## Deployment of a threat composer web application via AWS using containerisation (Docker), IaC (Terraform), and CI/CD (Github Actions).
+### Deployment of a threat composer web application via AWS using containerisation (Docker), IaC (Terraform), and CI/CD (Github Actions).
 
 ---
 
 ## Contents
 
 - [Core Technologies](#core-technologies)
-- [Automation & Infrastructure as Code](#automation--infrastructure-as-code)
 - [DevSecOps & Security](#devsecops--security)
 - [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Overview](#project-overview)
 - [What is a threat composer app?](#what-is-a-threat-composer-app)
+- [Why I chose the Threat Composer app?](#why-i-chose-the-threat-composer-app)
 - [Why I hosted it on ECS with Fargate](#why-i-hosted-it-on-ecs-with-fargate)
 - [Expected traffic and scaling capabilities](#expected-traffic-and-scaling-capabilities)
 - [Platform Engineering features](#platform-engineering-features)
@@ -26,39 +26,37 @@
 ---
 
 ## Core Technologies
+![](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
 ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![](https://img.shields.io/badge/Cloudflare_DNS-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
-
----
-
-## Automation & Infrastructure as Code
 ![](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
 ![](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 
 ---
 
 ## DevSecOps & Security
-![](https://img.shields.io/badge/Hadolint_(Dockerfile)-004088?style=for-the-badge&logo=docker&logoColor=white)
-![](https://img.shields.io/badge/Trivy_Image_Scanner-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
-![](https://img.shields.io/badge/Trivy_Security_Scanner-008080?style=for-the-badge&logo=aquasecurity&logoColor=white)
-![](https://img.shields.io/badge/AWS_ECR_Scan_On_Push-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/AWS_IAM_(OIDC)-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+- Hadolint (Dockerfile)
+- Lint (Terraform)
+- Trivy Image Scanner
+- Trivy Security Scanner
+- AWS ECR Scan-On-Push
+- AWS IAM (OIDC)
 
 ---
 
 ## AWS Cloud Architecture
-![](https://img.shields.io/badge/Amazon_ECS_&_Fargate-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Amazon_ECR-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Application_Load_Balancer-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Amazon_VPC-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Subnets_&_IGW-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Security_Groups-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/AWS_ACM-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![](https://img.shields.io/badge/Amazon_S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
-![](https://img.shields.io/badge/Amazon_CloudWatch-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
+- AWS ECS & Fargate
+- AWS ECR
+- Application_Load_Balancer
+- AWS VPC
+- Subnets & IGW
+- Security Groups
+- AWS ACM
+- AWS S3
+- AWS CloudWatch
 
 ---
 
@@ -122,9 +120,57 @@ Furthermore, by putting Cloudflare in front of the AWS infrastructure, all the s
 ---
 
 ### Repository Structure
-<p align="left">
-  <img width="600" src="./Images/Repository structure.png">
-</p>
+```
+.
+├── .github
+│   └── workflows
+│       ├── app.yml
+│       ├── bootstrap.yml
+│       ├── infra.yml
+│       └── workflow-ci.yml
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── infra
+│   ├── .terraform
+│   │   ├── modules
+│   │   │   └── modules.json
+│   │   ├── providers
+│   │   │   └── registry.terraform.io
+│   │   └── terraform.tfstate
+│   ├── .terraform.lock.hcl
+│   ├── main.tf
+│   ├── modules
+│   │   ├── acm
+│   │   │   ├── main.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── variables.tf
+│   │   ├── alb
+│   │   │   ├── main.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── variables.tf
+│   │   ├── ecr
+│   │   │   ├── main.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── variables.tf
+│   │   ├── ecs
+│   │   │   ├── data.tf
+│   │   │   ├── main.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── variables.tf
+│   │   └── vpc
+│   │       ├── data.tf
+│   │       ├── locals.tf
+│   │       ├── main.tf
+│   │       ├── outputs.tf
+│   │       └── variables.tf
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── terraform.tf
+│   ├── terraform.tfvars
+│   └── variables.tf
+└── nginx.conf
+```
 
 ---
 
