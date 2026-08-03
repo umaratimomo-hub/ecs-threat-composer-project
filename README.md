@@ -39,7 +39,7 @@
 
 ## DevSecOps & Security
 - Hadolint (Dockerfile)
-- Lint (Terraform)
+- TFLint (Terraform)
 - Trivy Image Scanner
 - Trivy Security Scanner
 - AWS ECR Scan-On-Push
