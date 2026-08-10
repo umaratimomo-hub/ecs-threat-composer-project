@@ -10,6 +10,7 @@
 - [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Overview](#project-overview)
 - [What is a threat composer app?](#what-is-a-threat-composer-app)
+- [Demo of the Application](#demo-of-the-application)
 - [Why I chose the Threat Composer app?](#why-i-chose-the-threat-composer-app)
 - [Why I hosted it on ECS with Fargate](#why-i-hosted-it-on-ecs-with-fargate)
 - [Expected traffic and scaling capabilities](#expected-traffic-and-scaling-capabilities)
@@ -67,6 +68,14 @@ This project aimed to demonstrate the deployment of a threat composer applicatio
 
 ### What is a threat composer app?
 Threat Composer is an open-source threat modeling tool originally developed by AWS. It’s designed to help developers, security engineers, and architects identify and mitigate potential security vulnerabilities during the software design phase by identifying security issues and developing strategies to address them in the system context. A threat model directly supports the ability to define, agree upon, and communicate what is necessary in order to deliver a secure product or service. The Threat Composer provides a structured, dashboard-style interface where teams can document system architecture, identify threats, and assign mitigations. 
+
+---
+
+### Demo of the Application
+
+https://github.com/user-attachments/assets/ea8f67b4-9329-4e65-8299-ad5c4fff4548
+
+*The threat composer app running with HTTPS encryption on the custom domain https://tm.umaratimomo.anaqahwear.com*
 
 ---
 
