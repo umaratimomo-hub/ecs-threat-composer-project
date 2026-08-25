@@ -13,7 +13,7 @@ RUN yarn install --frozen-lockfile
 
 COPY app/ ./
 
-# Build the application (this creates the build/ or dist/ folder)
+# Build the application
 RUN yarn build
 
 # ==========================================
@@ -21,11 +21,11 @@ RUN yarn build
 # ==========================================
 FROM docker.io/nginxinc/nginx-unprivileged:alpine
 
-# Copy your custom Nginx configuration
+# Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy ONLY the compiled assets from the 'builder' stage
-# (Adjust /app/build to /app/dist if your app outputs a dist folder)
+# (Adjust /app/build to /app/dist if app outputs a dist folder)
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Expose the unprivileged port

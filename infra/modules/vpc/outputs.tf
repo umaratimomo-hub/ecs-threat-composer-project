@@ -20,11 +20,3 @@ output "private_subnet_ids" {
   description = "List of private subnet IDs for ECS tasks"
   value       = [for s in aws_subnet.network : s.id if s.map_public_ip_on_launch == false]
 }
-
-# output "private_subnet_ids" {
-#   description = "List of private subnet IDs for ECS and VPC Endpoints"
-#   value = [
-#     aws_subnet.network["private-a"].id,
-#     aws_subnet.network["private-b"].id
-#   ]
-# }
