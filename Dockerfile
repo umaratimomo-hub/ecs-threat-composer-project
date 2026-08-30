@@ -23,7 +23,6 @@ FROM docker.io/nginxinc/nginx-unprivileged:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy ONLY the compiled assets from the 'builder' stage
-# (Adjust /app/build to /app/dist if app outputs a dist folder)
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Expose the unprivileged port
