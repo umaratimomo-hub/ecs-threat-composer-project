@@ -1,6 +1,5 @@
-# ==========================================
+
 # Stage 1: Build the Application
-# ==========================================
 FROM node:20-alpine AS builder
 
 # Set the working directory inside the container
@@ -16,9 +15,9 @@ COPY app/ ./
 # Build the application
 RUN yarn build
 
-# ==========================================
+-------
+
 # Stage 2: Serve with Nginx
-# ==========================================
 FROM docker.io/nginxinc/nginx-unprivileged:alpine
 
 # Copy custom Nginx configuration
